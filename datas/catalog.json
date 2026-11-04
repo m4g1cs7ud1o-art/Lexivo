@@ -1,0 +1,39 @@
+{
+  "groups": [
+    {
+      "classId": "05G5",
+      "grade": "05",
+      "accessCode": "057426",
+      "lists": [
+        {
+          "id": "classroom-basics",
+          "title": "In the classroom",
+          "description": "Schulsachen und Klassenraum",
+          "wordCount": 8,
+          "file": "datas/05G5/classroom-basics.json"
+        },
+        {
+          "id": "everyday-actions",
+          "title": "Everyday actions",
+          "description": "Einfache Verben im Alltag",
+          "wordCount": 8,
+          "file": "datas/05G5/everyday-actions.json"
+        }
+      ]
+    },
+    {
+      "classId": "12T2",
+      "grade": "12",
+      "accessCode": "128593",
+      "lists": [
+        {
+          "id": "climate-debate",
+          "title": "Climate and society",
+          "description": "Klimawandel und gesellschaftliche Debatte",
+          "wordCount": 8,
+          "file": "datas/12T2/climate-debate.json"
+        }
+      ]
+    }
+  ]
+}

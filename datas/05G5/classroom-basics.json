@@ -1,0 +1,14 @@
+{
+  "languageX": "Englisch",
+  "languageY": "Deutsch",
+  "entries": [
+    { "x": "the classroom", "y": "das Klassenzimmer" },
+    { "x": "the desk", "y": "der Schreibtisch" },
+    { "x": "the chair", "y": "der Stuhl" },
+    { "x": "the board", "y": "die Tafel" },
+    { "x": "the pencil", "y": "der Bleistift" },
+    { "x": "the notebook", "y": "das Heft" },
+    { "x": "the ruler", "y": "das Lineal" },
+    { "x": "the schoolbag", "y": "der Schulranzen" }
+  ]
+}

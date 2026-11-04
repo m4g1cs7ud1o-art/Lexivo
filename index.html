@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f2ec">
+  <title>Vokabular | Lernraum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Vokabular Startseite">
+        <span class="brand-mark" aria-hidden="true">V</span>
+        <span class="brand-name">vokabular<span class="brand-caption">KLASSENRAUM</span></span>
+      </a>
+      <div class="topbar-note"><span class="live-dot" aria-hidden="true"></span> Lernmaterial</div>
+    </header>
+
+    <main>
+      <section class="welcome-grid" aria-labelledby="page-title">
+        <div class="welcome-copy">
+          <p class="eyebrow"><span class="eyebrow-rule" aria-hidden="true"></span> DEIN ENGLISCH-LERNRAUM</p>
+          <h1 id="page-title">Wörter bleiben,<br><em>wenn du sie nutzt.</em></h1>
+          <p class="welcome-text">Öffne den Bereich deiner Klasse oder stöbere durch alle freigegebenen Vokabelsätze.</p>
+          <div class="study-image" role="img" aria-label="Notizbuch und Lernmaterial auf einem Schreibtisch"></div>
+          <div class="welcome-footnote"><span aria-hidden="true">01</span> Vokabeln nach Klassen sortiert</div>
+        </div>
+
+        <section class="entry-panel" aria-labelledby="entry-title">
+          <div class="panel-kicker"><span class="panel-index">01</span> GRUPPENZUGANG</div>
+          <h2 id="entry-title">Deine Klasse öffnen</h2>
+          <p class="panel-copy">Gib den sechsstelligen Code deiner Lerngruppe ein.</p>
+          <form id="code-form" novalidate>
+            <label for="group-code">Klassencode</label>
+            <div class="code-row">
+              <input id="group-code" name="code" type="text" inputmode="numeric" autocomplete="off" maxlength="6" pattern="[0-9]{6}" placeholder="z. B. 052847" aria-describedby="code-hint code-message" required>
+              <button class="primary-button" type="submit">Öffnen <span aria-hidden="true">↗</span></button>
+            </div>
+            <p class="field-hint" id="code-hint">6 Ziffern, beginnend mit dem Jahrgang.</p>
+            <p class="message" id="code-message" role="status" aria-live="polite"></p>
+          </form>
+          <div class="panel-divider"><span>ODER</span></div>
+          <button class="browse-button" id="browse-button" type="button">
+            Alle Vokabelsätze ansehen <span aria-hidden="true">→</span>
+          </button>
+        </section>
+      </section>
+
+      <section class="results-panel" id="results-panel" aria-labelledby="results-title" hidden>
+        <div class="results-heading">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-rule" aria-hidden="true"></span> VOKABELSAMMLUNG</p>
+            <h2 id="results-title">Vokabelsätze</h2>
+          </div>
+          <label class="grade-filter" id="grade-filter-wrap" for="grade-filter" hidden>
+            <span>Jahrgang</span>
+            <select id="grade-filter" name="grade">
+              <option value="all">Alle</option>
+            </select>
+          </label>
+        </div>
+        <div id="results-content" class="results-content" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>VOKABULAR <span class="footer-dot">/</span> ENGLISCH</span>
+      <span>Eine Sammlung für den Unterricht</span>
+    </footer>
+  </div>
+
+  <dialog class="list-dialog" id="list-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-inner">
+      <button class="dialog-close" id="dialog-close" type="button" aria-label="Liste schließen">×</button>
+      <p class="eyebrow"><span class="eyebrow-rule" aria-hidden="true"></span> <span id="dialog-class"></span></p>
+      <h2 id="dialog-title">Vokabelsatz</h2>
+      <p class="dialog-description" id="dialog-description"></p>
+      <div class="word-list" id="dialog-words"></div>
+    </div>
+  </dialog>
+</body>
+</html>

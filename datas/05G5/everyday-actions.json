@@ -1,0 +1,14 @@
+{
+  "languageX": "Englisch",
+  "languageY": "Deutsch",
+  "entries": [
+    { "x": "to get up", "y": "aufstehen" },
+    { "x": "to have breakfast", "y": "frühstücken" },
+    { "x": "to walk", "y": "gehen" },
+    { "x": "to read", "y": "lesen" },
+    { "x": "to write", "y": "schreiben" },
+    { "x": "to play", "y": "spielen" },
+    { "x": "to help", "y": "helfen" },
+    { "x": "to sleep", "y": "schlafen" }
+  ]
+}
