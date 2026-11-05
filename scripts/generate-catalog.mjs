@@ -1,4 +1,3 @@
-import { randomInt } from "node:crypto";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -6,35 +5,44 @@ import { fileURLToPath } from "node:url";
 const projectDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dataDirectory = path.join(projectDirectory, "datas");
 const catalogPath = path.join(dataDirectory, "catalog.json");
+const classesPath = path.join(dataDirectory, "classes.json");
 
-// 1001 START - Liest vorhandene Klassencodes, damit bestehende Codes stabil bleiben.
-async function readPreviousCatalog() {
-  try {
-    const contents = await readFile(catalogPath, "utf8");
-    const previousCatalog = JSON.parse(contents);
-    return Array.isArray(previousCatalog.groups) ? previousCatalog.groups : [];
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      return [];
-    }
-    throw error;
-  }
+// 1001 START - Liest und validiert die separate Klassenverwaltung.
+async function readClassConfiguration() {
+  const contents = await readFile(classesPath, "utf8");
+  const configuration = JSON.parse(contents);
+  validateClassConfiguration(configuration);
+  return configuration;
 }
 // 1001 ENDE
 
-// 1002 START - Erzeugt für neue Klassen einen zufälligen sechsstelligen Auswahlcode.
-function createAccessCode(classId, usedCodes) {
-  const grade = classId.slice(0, 2);
-  let suffix = randomInt(10000);
-  for (let attempt = 0; attempt < 10000; attempt += 1) {
-    const code = `${grade}${String(suffix).padStart(4, "0")}`;
-    if (!usedCodes.has(code)) {
-      return code;
-    }
-    suffix = (suffix + 1) % 10000;
+// 1002 START - Prüft Klassenkennungen, Gruppencodes und eindeutige Listen-IDs.
+function validateClassConfiguration(configuration) {
+  if (!configuration || !Array.isArray(configuration.groups)) {
+    throw new Error("datas/classes.json muss ein groups-Array enthalten.");
   }
 
-  throw new Error(`Für ${classId} konnte kein eindeutiger Code erzeugt werden.`);
+  const classIds = new Set();
+  const accessCodes = new Set();
+  for (const group of configuration.groups) {
+    if (!group || !/^\d{2}[A-Za-z0-9]*$/.test(group.classId || "") || group.grade !== group.classId.slice(0, 2)) {
+      throw new Error("Jede Gruppe braucht eine classId mit zweistelligem Jahrgang und passender grade-Angabe.");
+    }
+
+    if (!/^\d{6}$/.test(group.accessCode || "") || !group.accessCode.startsWith(group.grade)) {
+      throw new Error(`${group.classId}: accessCode muss sechsstellig sein und mit ${group.grade} beginnen.`);
+    }
+
+    if (classIds.has(group.classId) || accessCodes.has(group.accessCode)) {
+      throw new Error(`${group.classId}: Klassenkennung und Gruppencode müssen eindeutig sein.`);
+    }
+    classIds.add(group.classId);
+    accessCodes.add(group.accessCode);
+
+    if (!Array.isArray(group.lists) || group.lists.some((listId) => typeof listId !== "string") || new Set(group.lists).size !== group.lists.length) {
+      throw new Error(`${group.classId}: lists muss eindeutige Listen-IDs enthalten.`);
+    }
+  }
 }
 // 1002 ENDE
 
@@ -98,48 +106,38 @@ async function readVocabularyFolder(classId, folderName) {
 }
 // 1008 ENDE
 
-// 1005 START - Durchsucht alle Klassenordner und baut daraus die Gruppenliste.
-async function discoverGroups() {
-  const directoryEntries = await readdir(dataDirectory, { withFileTypes: true });
+// 1005 START - Baut Gruppen ausschließlich aus den administrativ zugewiesenen Listen.
+async function discoverGroups(configuredGroups) {
   const groups = [];
 
-  for (const directoryEntry of directoryEntries) {
-    if (!directoryEntry.isDirectory() || !/^\d{2}(?:[A-Za-z0-9]+)?$/.test(directoryEntry.name)) {
-      continue;
-    }
-
-    const classId = directoryEntry.name;
+  for (const configuredGroup of configuredGroups) {
+    const classId = configuredGroup.classId;
     const classDirectory = path.join(dataDirectory, classId);
     const entries = await readdir(classDirectory, { withFileTypes: true });
-    const listEntries = [];
-    for (const entry of entries) {
-      if (entry.isDirectory()) {
-        listEntries.push({ name: entry.name, isFolder: true });
-      } else if (entry.isFile() && entry.name.toLowerCase().endsWith(".json")) {
-        listEntries.push({ name: entry.name, isFolder: false });
-      }
-    }
-    listEntries.sort((firstEntry, secondEntry) => firstEntry.name.localeCompare(secondEntry.name, "de"));
 
     const lists = [];
-    for (const entry of listEntries) {
-      if (entry.isFolder) {
-        lists.push(await readVocabularyFolder(classId, entry.name));
-      } else {
-        const listId = entry.name.replace(/\.json$/i, "");
-        const filePath = path.join(classDirectory, entry.name);
-        lists.push(await readVocabularyFile(classId, listId, filePath, {}));
+    for (const listId of configuredGroup.lists) {
+      const listFolder = entries.find((entry) => entry.isDirectory() && entry.name === listId);
+      if (listFolder) {
+        lists.push(await readVocabularyFolder(classId, listId));
+        continue;
       }
+
+      const legacyFile = entries.find((entry) => entry.isFile() && entry.name === `${listId}.json`);
+      if (!legacyFile) {
+        throw new Error(`${classId}: Die zugewiesene Liste ${listId} wurde nicht gefunden.`);
+      }
+
+      const filePath = path.join(classDirectory, legacyFile.name);
+      lists.push(await readVocabularyFile(classId, listId, filePath, {}));
     }
 
-    if (lists.length > 0) {
-      groups.push({
-        classId,
-        grade: classId.slice(0, 2),
-        accessCode: "",
-        lists
-      });
-    }
+    groups.push({
+      classId,
+      grade: configuredGroup.grade,
+      accessCode: configuredGroup.accessCode,
+      lists
+    });
   }
 
   groups.sort(compareGroups);
@@ -154,36 +152,10 @@ function compareGroups(firstGroup, secondGroup) {
 }
 // 1007 ENDE
 
-// 1006 START - Behält vorhandene Codes bei und vergibt Codes für neue Klassen.
-function assignAccessCodes(groups, previousGroups) {
-  const previousCodes = new Map();
-  for (const group of previousGroups) {
-    previousCodes.set(group.classId, group.accessCode);
-  }
-
-  const usedCodes = new Set();
-  for (const group of groups) {
-    const previousCode = previousCodes.get(group.classId);
-    if (/^\d{6}$/.test(previousCode || "") && previousCode.startsWith(group.grade) && !usedCodes.has(previousCode)) {
-      group.accessCode = previousCode;
-      usedCodes.add(previousCode);
-    }
-  }
-
-  for (const group of groups) {
-    if (!group.accessCode) {
-      group.accessCode = createAccessCode(group.classId, usedCodes);
-      usedCodes.add(group.accessCode);
-    }
-  }
-}
-// 1006 ENDE
-
 // 9001 START - Erzeugt datas/catalog.json aus allen Vokabeldateien.
 async function generateCatalog() {
-  const previousGroups = await readPreviousCatalog();
-  const groups = await discoverGroups();
-  assignAccessCodes(groups, previousGroups);
+  const configuration = await readClassConfiguration();
+  const groups = await discoverGroups(configuration.groups);
 
   const output = `${JSON.stringify({ groups }, null, 2)}\n`;
   if (process.argv.includes("--dry-run")) {

@@ -2,11 +2,28 @@
 
 Statische Vokabelsammlung für GitHub Pages. Gruppencodes dienen zum Finden der passenden Klasse; die Dateien im Repository sind öffentlich und nicht durch den Code geschützt.
 
+## Klassen verwalten
+
+Die Schüleroberfläche enthält keine Verwaltungsfunktionen. Klassen, Codes und freigegebene Vokabelsätze bearbeitest du zentral in `datas/classes.json`. Nur dort eingetragene Listen erscheinen auf der Website. Zum Ausblenden einer Liste entfernst du ihre ID aus `lists`; zum Hinzufügen trägst du die ID des Ordners unter der Klasse ein. Gruppencodes müssen sechs Ziffern haben und mit dem Jahrgang beginnen.
+
+Beispiel für eine Zuordnung:
+
+```json
+{
+  "classId": "09Lat",
+  "grade": "09",
+  "accessCode": "091864",
+  "lists": ["lektion-22"]
+}
+```
+
+Die Klassen-IDs und Codes sind keine Zugangssicherung: Die Daten und Konfiguration liegen öffentlich im Repository.
+
 ## Listen pflegen
 
 Jede Klasse oder Jahrgangsgruppe bekommt einen Ordner unter `datas/`, zum Beispiel `datas/12Eng/` oder `datas/09Lat/`. Jeder Vokabelsatz liegt in einem eigenen Unterordner. Der Ordnername ist gleichzeitig der Name der Vokabeldatei ohne `.json`.
 
-Ein Gruppencode besteht aus sechs Ziffern. Die ersten beiden Ziffern entsprechen dem Jahrgang, zum Beispiel `09` für `09Lat` oder `12` für `12Eng`. Bestehende Codes bleiben erhalten; für neue Klassen wird automatisch ein eindeutiger Code erzeugt. Der Code ist nur eine Auswahlhilfe, keine Zugangssperre.
+Ein Gruppencode besteht aus sechs Ziffern. Die ersten beiden Ziffern entsprechen dem Jahrgang, zum Beispiel `09` für `09Lat` oder `12` für `12Eng`. Lege den gewünschten Code in `datas/classes.json` fest und achte darauf, dass er eindeutig ist. Der Code ist nur eine Auswahlhilfe, keine Zugangssperre.
 
 Eine Vokabeldatei verwendet dieses Format:
 
@@ -55,7 +72,7 @@ Inhalt von `meta.json`:
 
 `id` muss dem Ordnernamen entsprechen. Der Generator verwendet Titel und Beschreibung aus den Metadaten und setzt `wordCount` sowie `file` aus der tatsächlichen Vokabeldatei neu.
 
-Nach einem Push mit neuen oder geänderten JSON-Dateien durchsucht GitHub Actions die Klassenordner und aktualisiert `datas/catalog.json` automatisch. Die Katalogdatei muss nicht manuell bearbeitet werden. Für den Workflow müssen GitHub Actions Schreibrechte für das Repository haben (**Settings → Actions → General → Workflow permissions → Read and write permissions**).
+Nach einem Push mit Änderungen an `datas/classes.json` oder Vokabeldateien aktualisiert GitHub Actions `datas/catalog.json` automatisch. Die Katalogdatei muss nicht manuell bearbeitet werden. Für den Workflow müssen GitHub Actions Schreibrechte für das Repository haben (**Settings → Actions → General → Workflow permissions → Read and write permissions**).
 
 ## Lokal ansehen
 

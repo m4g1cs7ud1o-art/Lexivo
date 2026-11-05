@@ -1,0 +1,23 @@
+{
+  "groups": [
+    {
+      "classId": "09Lat",
+      "grade": "09",
+      "accessCode": "091864",
+      "lists": [
+        "lektion-22"
+      ]
+    },
+    {
+      "classId": "12Eng",
+      "grade": "12",
+      "accessCode": "121864",
+      "lists": [
+        "african-american-experiences",
+        "us-civil-rights-movement",
+        "us-history",
+        "westward-movement"
+      ]
+    }
+  ]
+}

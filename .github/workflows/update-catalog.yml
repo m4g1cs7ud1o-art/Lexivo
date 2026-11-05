@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - "datas/classes.json"
       - "datas/**/*.json"
       - "scripts/generate-catalog.mjs"
   workflow_dispatch:
