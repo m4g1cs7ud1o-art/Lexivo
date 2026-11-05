@@ -127,7 +127,7 @@ function configureSessionHeader() {
   sessionTitle.textContent = list.title;
   sessionModeLabel.textContent = modeNames[sessionMode];
   sessionDirectionLabel.textContent = sessionMode === "quiz" ? "Zufällige Richtung" : getDirectionLabel(requestedDirection);
-  document.title = `${list.title} | Wortwerk`;
+  document.title = `${list.title} | Lexivo`;
 }
 // 9006 ENDE
 
