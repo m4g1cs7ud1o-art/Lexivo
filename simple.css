@@ -97,6 +97,7 @@ select {
   color: var(--green);
 }
 
+/* PAGE TITLE: Basisstil der Seitentitel */
 h1,
 h2,
 p {
@@ -143,6 +144,7 @@ h1 {
   margin-bottom: 15px;
 }
 
+/* PAGE TITLE: Überschrift auf der Startseite */
 .home-panel h1 {
   margin-bottom: 12px;
   font-size: 40px;
@@ -736,6 +738,7 @@ h1 {
     min-height: calc(100svh - 124px);
   }
 
+  /* PAGE TITLE: Schriftgröße auf kleinen Bildschirmen */
   .home-panel h1 {
     font-size: 32px;
   }
