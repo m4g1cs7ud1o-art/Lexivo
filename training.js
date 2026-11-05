@@ -28,6 +28,7 @@ let currentDirection = "xy";
 let isRevealed = false;
 let hasAnswered = false;
 let correctAnswers = 0;
+let totalAnswerCount = 0;
 
 // 9001 START - Validiert Parameter, lädt Liste und startet den angeforderten Modus.
 async function startTrainingPage() {
@@ -61,7 +62,13 @@ async function startTrainingPage() {
     vocabulary = await vocabularyResponse.json();
 
     const shuffledEntries = shuffleEntries(vocabulary.entries);
-    deck = sessionMode === "test" ? shuffledEntries.slice(0, normalizeTestCount(shuffledEntries.length)) : shuffledEntries;
+    if (sessionMode === "quiz") {
+      deck = createQuizDeck(shuffledEntries);
+      totalAnswerCount = deck.length;
+    } else {
+      deck = sessionMode === "test" ? shuffledEntries.slice(0, normalizeTestCount(shuffledEntries.length)) : shuffledEntries;
+      totalAnswerCount = sessionMode === "test" ? countTestAnswers(deck) : deck.length;
+    }
     configureSessionHeader();
     renderQuestion();
   } catch (error) {
@@ -161,11 +168,12 @@ function renderPracticeQuestion() {
   const pair = getQuestionPair(deck[currentIndex], currentDirection);
   const hint = createElement("p", "question-hint", getDirectionLabel(currentDirection));
   const prompt = createElement("h2", "question-word", pair.question);
+  const info = createQuestionInfo(deck[currentIndex]);
   const answer = createElement("p", "practice-answer", "");
   answer.id = "practice-answer";
   const questionElements = [hint, prompt];
-  const info = createQuestionInfo(deck[currentIndex]);
   if (info) {
+    info.hidden = true;
     questionElements.push(info);
   }
   questionElements.push(answer);
@@ -183,6 +191,10 @@ function handleRevealAnswer() {
   }
 
   isRevealed = true;
+  const info = document.querySelector("#practice-info");
+  if (info) {
+    info.hidden = false;
+  }
   document.querySelector("#practice-answer").textContent = getQuestionPair(deck[currentIndex], currentDirection).answer;
   questionActions.replaceChildren(createButton("primary-button", currentIndex + 1 === deck.length ? "Abschließen" : "Weiter", advanceQuestion));
 }
@@ -190,25 +202,23 @@ function handleRevealAnswer() {
 
 // 4001 START - Rendert eine Multiple-Choice-Frage mit vier Antworten.
 function renderQuizQuestion() {
-  const pair = getQuestionPair(deck[currentIndex], currentDirection);
-  const hint = createElement("p", "question-hint", "Wähle die richtige Übersetzung");
+  const task = deck[currentIndex];
+  const pair = getQuizPair(task, currentDirection);
+  const hintText = task.type === "info"
+    ? "Wähle die passende Zusatzangabe"
+    : "Wähle die richtige Übersetzung";
+  const hint = createElement("p", "question-hint", hintText);
   const prompt = createElement("h2", "question-word", pair.question);
-  const info = createQuestionInfo(deck[currentIndex]);
   const choices = createElement("div", "choice-list", "");
   choices.addEventListener("click", handleQuizChoice);
 
-  for (const choice of createQuizChoices(deck[currentIndex], currentDirection)) {
+  for (const choice of createQuizChoices(task, currentDirection)) {
     const button = createButton("choice-button", choice, null);
     button.dataset.answer = choice;
     choices.append(button);
   }
 
-  const questionElements = [hint, prompt];
-  if (info) {
-    questionElements.push(info);
-  }
-  questionElements.push(choices);
-  questionContent.replaceChildren(...questionElements);
+  questionContent.replaceChildren(hint, prompt, choices);
 }
 // 4001 ENDE
 
@@ -220,7 +230,7 @@ function handleQuizChoice(event) {
   }
 
   hasAnswered = true;
-  const pair = getQuestionPair(deck[currentIndex], currentDirection);
+  const pair = getQuizPair(deck[currentIndex], currentDirection);
   const isCorrect = button.dataset.answer === pair.answer;
   if (isCorrect) {
     correctAnswers += 1;
@@ -246,27 +256,39 @@ function renderTestQuestion() {
   const pair = getQuestionPair(deck[currentIndex], currentDirection);
   const hint = createElement("p", "question-hint", "Tippe die Übersetzung ein");
   const prompt = createElement("h2", "question-word", pair.question);
-  const info = createQuestionInfo(deck[currentIndex]);
   const form = createElement("form", "answer-form", "");
-  const input = document.createElement("input");
-  input.type = "text";
-  input.name = "answer";
-  input.autocomplete = "off";
-  input.setAttribute("aria-label", "Deine Antwort");
-  input.required = true;
+  const answerFields = createElement("div", "test-answer-fields", "");
+  const answerField = createTestInput("answer", `Übersetzung (${getDirectionLabel(currentDirection)})`);
+  answerFields.append(answerField.wrapper);
+
+  if (deck[currentIndex].z) {
+    const infoField = createTestInput("info", vocabulary.languageZ || "Zusatzinformation");
+    answerFields.append(infoField.wrapper);
+  }
+
   const submit = createButton("primary-button", "Prüfen", null);
   submit.type = "submit";
-  form.append(input, submit);
+  form.append(answerFields, submit);
   form.addEventListener("submit", handleTestAnswer);
-  const questionElements = [hint, prompt];
-  if (info) {
-    questionElements.push(info);
-  }
-  questionElements.push(form);
-  questionContent.replaceChildren(...questionElements);
-  input.focus();
+  questionContent.replaceChildren(hint, prompt, form);
+  answerField.input.focus();
 }
 // 5001 ENDE
+
+// 5011 START - Erstellt ein beschriftetes Texteingabefeld für eine Testantwort.
+function createTestInput(name, labelText) {
+  const wrapper = createElement("label", "test-answer-field", "");
+  const label = createElement("span", "", labelText);
+  const input = document.createElement("input");
+  input.type = "text";
+  input.name = name;
+  input.autocomplete = "off";
+  input.required = true;
+  input.setAttribute("aria-label", labelText);
+  wrapper.append(label, input);
+  return { wrapper, input };
+}
+// 5011 ENDE
 
 // 5010 START - Erstellt bei vorhandener Zusatzspalte einen Hinweis zur aktuellen Vokabel.
 function createQuestionInfo(entry) {
@@ -275,7 +297,9 @@ function createQuestionInfo(entry) {
   }
 
   const label = vocabulary.languageZ || "Zusatzinformation";
-  return createElement("p", "question-note", `${label}: ${entry.z}`);
+  const info = createElement("p", "question-note", `${label}: ${entry.z}`);
+  info.id = "practice-info";
+  return info;
 }
 // 5010 ENDE
 
@@ -286,23 +310,42 @@ function handleTestAnswer(event) {
     return;
   }
 
-  const input = questionContent.querySelector('input[name="answer"]');
-  const givenAnswer = normalizeAnswer(input.value);
-  if (!givenAnswer) {
-    input.focus();
-    return;
+  const inputs = questionContent.querySelectorAll('input[name="answer"], input[name="info"]');
+  for (const input of inputs) {
+    if (!input.value.trim()) {
+      input.focus();
+      return;
+    }
+  }
+
+  const pair = getQuestionPair(deck[currentIndex], currentDirection);
+  const answerChecks = [{
+    input: questionContent.querySelector('input[name="answer"]'),
+    expected: pair.answer,
+    label: "Übersetzung"
+  }];
+  if (deck[currentIndex].z) {
+    answerChecks.push({
+      input: questionContent.querySelector('input[name="info"]'),
+      expected: deck[currentIndex].z,
+      label: vocabulary.languageZ || "Zusatzinformation"
+    });
+  }
+
+  const incorrectAnswers = [];
+  for (const check of answerChecks) {
+    if (normalizeAnswer(check.input.value) === normalizeAnswer(check.expected)) {
+      correctAnswers += 1;
+    } else {
+      incorrectAnswers.push(`${check.label}: ${check.expected}`);
+    }
+    check.input.disabled = true;
   }
 
   hasAnswered = true;
-  const pair = getQuestionPair(deck[currentIndex], currentDirection);
-  const isCorrect = givenAnswer === normalizeAnswer(pair.answer);
-  if (isCorrect) {
-    correctAnswers += 1;
-  }
-
-  input.disabled = true;
   questionContent.querySelector("button[type=submit]").disabled = true;
-  showAnswerFeedback(isCorrect, pair.answer);
+  const isCorrect = incorrectAnswers.length === 0;
+  showAnswerFeedback(isCorrect, incorrectAnswers.join(" · "));
   showNextButton();
 }
 // 5002 ENDE
@@ -313,14 +356,56 @@ function normalizeAnswer(answer) {
 }
 // 5003 ENDE
 
+// 5012 START - Zählt Übersetzung und vorhandene Zusatzinformation als eigene Testantworten.
+function countTestAnswers(entries) {
+  let answerCount = 0;
+  for (const entry of entries) {
+    answerCount += entry.z ? 2 : 1;
+  }
+
+  return answerCount;
+}
+// 5012 ENDE
+
+// 4006 START - Erzeugt Übersetzungs- und Zusatzinformationsfragen für den Prüfmodus.
+function createQuizDeck(entries) {
+  const tasks = [];
+  for (const entry of entries) {
+    tasks.push({ entry, type: "translation" });
+    if (entry.z) {
+      tasks.push({ entry, type: "info" });
+    }
+  }
+
+  return tasks;
+}
+// 4006 ENDE
+
+// 4007 START - Formatiert eine Quizfrage abhängig vom abgefragten Feld.
+function getQuizPair(task, direction) {
+  if (task.type === "info") {
+    const wordPair = getQuestionPair(task.entry, direction);
+    return {
+      question: `Welche Zusatzangabe passt zu „${wordPair.question}“?`,
+      answer: task.entry.z
+    };
+  }
+
+  return getQuestionPair(task.entry, direction);
+}
+// 4007 ENDE
+
 // 4003 START - Erstellt bis zu vier eindeutige Multiple-Choice-Antworten.
-function createQuizChoices(correctEntry, direction) {
-  const correctAnswer = getQuestionPair(correctEntry, direction).answer;
+function createQuizChoices(task, direction) {
+  const correctAnswer = getQuizPair(task, direction).answer;
   const choices = [correctAnswer];
   const candidates = shuffleEntries(vocabulary.entries);
 
   for (const candidate of candidates) {
-    const answer = getQuestionPair(candidate, direction).answer;
+    const answer = task.type === "info" ? candidate.z : getQuestionPair(candidate, direction).answer;
+    if (!answer) {
+      continue;
+    }
     if (!choices.includes(answer)) {
       choices.push(answer);
     }
@@ -363,8 +448,10 @@ function renderSummary() {
   const score = createElement("p", "summary-score", "");
   if (sessionMode === "practice") {
     score.textContent = `${deck.length} Karteikarten durchgesehen.`;
+  } else if (sessionMode === "quiz") {
+    score.textContent = `${correctAnswers} von ${totalAnswerCount} Aufgaben richtig.`;
   } else {
-    score.textContent = `${correctAnswers} von ${deck.length} richtig.`;
+    score.textContent = `${correctAnswers} von ${totalAnswerCount} Antworten richtig.`;
   }
   summary.append(title, score);
   questionContent.replaceChildren(summary);
@@ -413,7 +500,8 @@ function getDirectionLabel(direction) {
 // 9010 START - Aktualisiert Fortschrittsanzeige und Zähler.
 function updateProgress(isComplete = false) {
   const completedCount = isComplete ? deck.length : currentIndex;
-  progressLabel.textContent = `${Math.min(currentIndex + 1, deck.length)} von ${deck.length} Vokabeln`;
+  const progressUnit = sessionMode === "quiz" ? "Aufgaben" : "Vokabeln";
+  progressLabel.textContent = `${Math.min(currentIndex + 1, deck.length)} von ${deck.length} ${progressUnit}`;
   progressFill.style.width = `${(completedCount / deck.length) * 100}%`;
 }
 // 9010 ENDE

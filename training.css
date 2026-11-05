@@ -100,6 +100,20 @@
   gap: 9px;
 }
 
+.test-answer-fields {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 12px;
+}
+
+.test-answer-field {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
 .answer-form input {
   min-width: 0;
   min-height: 44px;
