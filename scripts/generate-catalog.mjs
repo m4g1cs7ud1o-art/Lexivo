@@ -103,7 +103,7 @@ async function discoverGroups() {
   const groups = [];
 
   for (const directoryEntry of directoryEntries) {
-    if (!directoryEntry.isDirectory() || !/^\d{2}[A-Za-z0-9]+$/.test(directoryEntry.name)) {
+    if (!directoryEntry.isDirectory() || !/^\d{2}(?:[A-Za-z0-9]+)?$/.test(directoryEntry.name)) {
       continue;
     }
 

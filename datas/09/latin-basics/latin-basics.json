@@ -1,0 +1,24 @@
+{
+  "languageX": "Latein",
+  "languageY": "Deutsch",
+  "entries": [
+    { "x": "puella, -ae f.", "y": "das Mädchen" },
+    { "x": "puer, -i m.", "y": "der Junge" },
+    { "x": "amicus, -i m.", "y": "der Freund" },
+    { "x": "familia, -ae f.", "y": "die Familie" },
+    { "x": "mater, matris f.", "y": "die Mutter" },
+    { "x": "pater, patris m.", "y": "der Vater" },
+    { "x": "aqua, -ae f.", "y": "das Wasser" },
+    { "x": "terra, -ae f.", "y": "das Land, die Erde" },
+    { "x": "via, -ae f.", "y": "der Weg, die Straße" },
+    { "x": "domus, -us f.", "y": "das Haus" },
+    { "x": "habere", "y": "haben" },
+    { "x": "videre", "y": "sehen" },
+    { "x": "audire", "y": "hören" },
+    { "x": "laudare", "y": "loben" },
+    { "x": "portare", "y": "tragen" },
+    { "x": "bonus, -a, -um", "y": "gut" },
+    { "x": "magnus, -a, -um", "y": "groß" },
+    { "x": "et", "y": "und" }
+  ]
+}
