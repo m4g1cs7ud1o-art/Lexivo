@@ -2,6 +2,8 @@
 
 let catalog = null;
 let codeFilterGroup = null;
+let selectedGroup = null;
+let selectedList = null;
 
 const codeForm = document.querySelector("#code-form");
 const codeInput = document.querySelector("#group-code");
@@ -11,6 +13,10 @@ const gradeFilter = document.querySelector("#grade-filter");
 const resultsCount = document.querySelector("#results-count");
 const resultsContent = document.querySelector("#results-content");
 const listDialog = document.querySelector("#list-dialog");
+const modeDialog = document.querySelector("#mode-dialog");
+const modeForm = document.querySelector("#mode-form");
+const testCount = document.querySelector("#test-count");
+const testCountValue = document.querySelector("#test-count-value");
 
 // 9001 START - Verbindet die Filter und lädt beim Start alle Katalogdaten.
 function startApp() {
@@ -18,8 +24,12 @@ function startApp() {
   codeInput.addEventListener("input", handleCodeInput);
   clearCodeButton.addEventListener("click", handleClearCode);
   gradeFilter.addEventListener("change", handleGradeChange);
-  resultsContent.addEventListener("click", handleListOpen);
+  resultsContent.addEventListener("click", handleListAction);
   document.querySelector("#dialog-close").addEventListener("click", closeListDialog);
+  document.querySelector("#mode-dialog-close").addEventListener("click", closeModeDialog);
+  modeForm.addEventListener("change", updateModeSettings);
+  modeForm.addEventListener("submit", startSelectedMode);
+  testCount.addEventListener("input", updateTestCount);
   loadCatalog();
 }
 // 9001 ENDE
@@ -39,6 +49,7 @@ async function loadCatalog() {
 
     catalog.groups = sortGroups(catalog.groups);
     populateGradeFilter(catalog.groups);
+    applyInitialCode();
     renderVisibleGroups();
   } catch (error) {
     setStatus("Die Vokabelsammlung ist gerade nicht erreichbar.");
@@ -83,12 +94,31 @@ function handleCodeInput() {
 }
 // 2002 ENDE
 
+// 2006 START - Wendet einen Klassencode aus dem Link der Startseite an.
+function applyInitialCode() {
+  const code = new URLSearchParams(window.location.search).get("code");
+  if (!code) {
+    return;
+  }
+
+  codeInput.value = code;
+  codeFilterGroup = findGroupByCode(code);
+  if (!codeFilterGroup) {
+    setStatus("Zu diesem Code wurde keine Lerngruppe gefunden.");
+    return;
+  }
+
+  setStatus(`Klasse ${codeFilterGroup.classId} wird angezeigt.`);
+}
+// 2006 ENDE
+
 // 2003 START - Entfernt den Klassencodefilter und zeigt wieder alle Listen.
 function handleClearCode() {
   codeInput.value = "";
   codeFilterGroup = null;
   gradeFilter.value = "all";
   setStatus("");
+  window.history.replaceState(null, "", "lists.html");
   renderVisibleGroups();
 }
 // 2003 ENDE
@@ -207,20 +237,34 @@ function appendListCards(container, group) {
     details.append(title, description);
 
     const openButton = document.createElement("button");
-    openButton.className = "list-open";
-    openButton.type = "button";
-    openButton.dataset.groupId = group.classId;
-    openButton.dataset.listId = list.id;
-    openButton.textContent = "Alle Wörter ansehen";
-    card.append(details, openButton);
+    const actions = document.createElement("div");
+    actions.className = "list-actions";
+
+    const showButton = document.createElement("button");
+    showButton.className = "list-open";
+    showButton.type = "button";
+    showButton.dataset.action = "show-list";
+    showButton.dataset.groupId = group.classId;
+    showButton.dataset.listId = list.id;
+    showButton.textContent = "Alle Wörter ansehen";
+
+    const learnButton = document.createElement("button");
+    learnButton.className = "list-learn";
+    learnButton.type = "button";
+    learnButton.dataset.action = "choose-mode";
+    learnButton.dataset.groupId = group.classId;
+    learnButton.dataset.listId = list.id;
+    learnButton.textContent = "Lernen";
+    actions.append(showButton, learnButton);
+    card.append(details, actions);
     container.append(card);
   }
 }
 // 1007 ENDE
 
-// 1008 START - Lädt die Vokabeldatei der gewählten Karte in den Dialog.
-async function handleListOpen(event) {
-  const button = event.target.closest("button[data-list-id]");
+// 1008 START - Öffnet die Wortliste oder den Dialog zur Modusauswahl.
+async function handleListAction(event) {
+  const button = event.target.closest("button[data-action]");
   if (!button) {
     return;
   }
@@ -228,6 +272,11 @@ async function handleListOpen(event) {
   const group = findGroupById(button.dataset.groupId);
   const list = findListById(group, button.dataset.listId);
   if (!group || !list) {
+    return;
+  }
+
+  if (button.dataset.action === "choose-mode") {
+    openModeDialog(group, list);
     return;
   }
 
@@ -248,6 +297,62 @@ async function handleListOpen(event) {
   }
 }
 // 1008 ENDE
+
+// 3001 START - Zeigt die Modusauswahl und stellt listenabhängige Grenzen ein.
+function openModeDialog(group, list) {
+  selectedGroup = group;
+  selectedList = list;
+  document.querySelector("#mode-list-class").textContent = group.classId;
+  document.querySelector("#mode-list-title").textContent = `${list.title} · ${list.wordCount} Wörter`;
+  testCount.max = String(Math.max(1, list.wordCount));
+  testCount.value = String(Math.min(20, Math.max(1, list.wordCount)));
+  updateTestCount();
+  modeForm.querySelector('input[name="mode"][value="practice"]').checked = true;
+  updateModeSettings();
+  modeDialog.showModal();
+}
+// 3001 ENDE
+
+// 3002 START - Zeigt nur die Einstellungen des ausgewählten Lernmodus.
+function updateModeSettings() {
+  const mode = modeForm.querySelector('input[name="mode"]:checked').value;
+  document.querySelector("#practice-settings").hidden = mode !== "practice";
+  document.querySelector("#quiz-settings").hidden = mode !== "quiz";
+  document.querySelector("#test-settings").hidden = mode !== "test";
+}
+// 3002 ENDE
+
+// 3003 START - Aktualisiert die sichtbare Anzahl im Testregler.
+function updateTestCount() {
+  testCountValue.value = testCount.value;
+  testCountValue.textContent = testCount.value;
+}
+// 3003 ENDE
+
+// 3004 START - Startet den gewählten Modus mit der passenden Liste und den Parametern.
+function startSelectedMode(event) {
+  event.preventDefault();
+  if (!selectedGroup || !selectedList) {
+    return;
+  }
+
+  const mode = modeForm.querySelector('input[name="mode"]:checked').value;
+  const target = new URL("training.html", window.location.href);
+  target.searchParams.set("class", selectedGroup.classId);
+  target.searchParams.set("list", selectedList.id);
+  target.searchParams.set("mode", mode);
+
+  if (mode === "practice") {
+    target.searchParams.set("direction", modeForm.querySelector('input[name="practice-direction"]:checked').value);
+  }
+  if (mode === "test") {
+    target.searchParams.set("count", testCount.value);
+    target.searchParams.set("direction", document.querySelector("#test-direction").value);
+  }
+
+  window.location.href = target.toString();
+}
+// 3004 ENDE
 
 // 1009 START - Zeigt die Vokabeln und Sprachrichtungen im Dialog an.
 function renderListDialog(group, list, vocabulary) {
@@ -377,5 +482,11 @@ function closeListDialog() {
   listDialog.close();
 }
 // 9008 ENDE
+
+// 9009 START - Schließt die Modusauswahl ohne einen Lernmodus zu starten.
+function closeModeDialog() {
+  modeDialog.close();
+}
+// 9009 ENDE
 
 startApp();

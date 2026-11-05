@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f2ec">
+  <title>Vokabelsätze | Wortwerk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="simple.css">
+  <script src="simple-app.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html">← Startseite</a>
+      <span class="topbar-label">WORTWERK</span>
+    </header>
+
+    <main>
+      <section class="collection" aria-labelledby="page-title">
+        <div class="collection-heading">
+          <div>
+            <p class="eyebrow">LERNMATERIAL NACH JAHRGANG</p>
+            <h1 id="page-title">Vokabelsätze</h1>
+            <p class="intro">Wähle eine Liste, sieh dir alle Wörter an oder starte eine Übung.</p>
+          </div>
+        </div>
+
+        <form class="code-filter" id="code-form" novalidate>
+          <label for="group-code">Klasse über Code finden</label>
+          <div class="filter-controls">
+            <input id="group-code" name="code" type="text" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="6-stelliger Klassencode" aria-describedby="code-message">
+            <button class="primary-button" type="submit">Filtern</button>
+            <button class="text-button" id="clear-code" type="button">Alle zeigen</button>
+          </div>
+          <p class="message" id="code-message" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="list-toolbar">
+          <p id="results-count" aria-live="polite">Sammlung wird geladen …</p>
+          <label class="grade-filter" for="grade-filter">
+            <span>Jahrgang</span>
+            <select id="grade-filter" name="grade">
+              <option value="all">Alle</option>
+            </select>
+          </label>
+        </div>
+        <div id="results-content" class="results-content" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer">Wortwerk <span>·</span> Englisch lernen, Wort für Wort</footer>
+  </div>
+
+  <dialog class="list-dialog" id="list-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-inner">
+      <button class="dialog-close" id="dialog-close" type="button" aria-label="Liste schließen">×</button>
+      <p class="dialog-class" id="dialog-class"></p>
+      <h2 id="dialog-title">Vokabelsatz</h2>
+      <p class="dialog-description" id="dialog-description"></p>
+      <div class="word-list" id="dialog-words"></div>
+    </div>
+  </dialog>
+
+  <dialog class="mode-dialog" id="mode-dialog" aria-labelledby="mode-dialog-title">
+    <form class="mode-dialog-inner" id="mode-form">
+      <button class="dialog-close" id="mode-dialog-close" type="button" aria-label="Modusauswahl schließen">×</button>
+      <p class="dialog-class" id="mode-list-class"></p>
+      <h2 id="mode-dialog-title">Lernmodus wählen</h2>
+      <p class="dialog-description" id="mode-list-title"></p>
+
+      <fieldset class="mode-options">
+        <legend class="visually-hidden">Lernmodus</legend>
+        <label class="mode-option">
+          <input type="radio" name="mode" value="practice" checked>
+          <span class="mode-option-body"><strong>Üben</strong><small>Karteikarten drehen</small></span>
+        </label>
+        <label class="mode-option">
+          <input type="radio" name="mode" value="quiz">
+          <span class="mode-option-body"><strong>Prüfen</strong><small>Multiple Choice</small></span>
+        </label>
+        <label class="mode-option">
+          <input type="radio" name="mode" value="test">
+          <span class="mode-option-body"><strong>Test</strong><small>Antworten eintippen</small></span>
+        </label>
+      </fieldset>
+
+      <fieldset class="mode-setting" id="practice-settings">
+        <legend>Abfragerichtung</legend>
+        <label><input type="radio" name="practice-direction" value="xy" checked> Englisch → Deutsch</label>
+        <label><input type="radio" name="practice-direction" value="yx"> Deutsch → Englisch</label>
+      </fieldset>
+
+      <div class="mode-note" id="quiz-settings" hidden>Die Abfragerichtung wechselt zufällig.</div>
+
+      <div class="mode-setting" id="test-settings" hidden>
+        <label for="test-count">Anzahl der Vokabeln: <output id="test-count-value">20</output></label>
+        <input id="test-count" type="range" min="1" max="20" value="20">
+        <label for="test-direction">Abfragerichtung</label>
+        <select id="test-direction">
+          <option value="random">Zufällig wechseln</option>
+          <option value="xy">Englisch → Deutsch</option>
+          <option value="yx">Deutsch → Englisch</option>
+        </select>
+      </div>
+
+      <button class="primary-button mode-start" type="submit">Weiter zum Lernen <span aria-hidden="true">→</span></button>
+    </form>
+  </dialog>
+</body>
+</html>

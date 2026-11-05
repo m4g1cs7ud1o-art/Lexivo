@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f2ec">
+  <title>Lernen | Wortwerk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="simple.css">
+  <link rel="stylesheet" href="training.css">
+  <script src="training.js" defer></script>
+</head>
+<body>
+  <div class="page-shell training-shell">
+    <header class="topbar">
+      <a class="brand" href="lists.html">← Zurück zu den Listen</a>
+      <span class="topbar-label">WORTWERK</span>
+    </header>
+
+    <main class="training-main">
+      <section class="training-heading">
+        <p class="eyebrow" id="session-class">LERNRUNDE</p>
+        <h1 id="session-title">Vokabelsatz wird geladen</h1>
+        <div class="session-meta">
+          <span id="session-mode"></span>
+          <span id="session-direction"></span>
+        </div>
+        <div class="progress-track" aria-hidden="true"><span id="progress-fill"></span></div>
+        <p class="progress-label" id="progress-label" aria-live="polite"></p>
+      </section>
+
+      <section class="question-panel" id="question-panel" aria-live="polite">
+        <div id="question-content"></div>
+        <div id="answer-feedback" class="answer-feedback" role="status" aria-live="polite"></div>
+        <div id="question-actions" class="question-actions"></div>
+      </section>
+      <p class="session-error" id="session-error" role="alert" hidden></p>
+    </main>
+
+    <footer class="footer">Wortwerk <span>·</span> Englisch lernen, Wort für Wort</footer>
+  </div>
+</body>
+</html>

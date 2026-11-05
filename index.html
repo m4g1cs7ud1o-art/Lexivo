@@ -4,58 +4,35 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f2ec">
-  <title>Vokabular | Lernraum</title>
+  <title>Wortwerk | Englisch lernen</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="simple.css">
-  <script src="simple-app.js" defer></script>
+  <script src="home.js" defer></script>
 </head>
 <body>
   <div class="page-shell">
     <header class="topbar">
-      <a class="brand" href="./" aria-label="Vokabular Startseite">
-        <span class="brand-mark" aria-hidden="true">V</span>
-        <span>vokabular</span>
-      </a>
       <span class="topbar-label">ENGLISCH · DEUTSCH</span>
+      <a class="brand" href="./" aria-label="Wortwerk Startseite">Wortwerk</a>
     </header>
 
     <main>
-      <section class="collection" aria-labelledby="page-title">
-        <div class="collection-heading">
-          <div>
-            <p class="eyebrow">LERNMATERIAL NACH JAHRGANG</p>
-            <h1 id="page-title">Vokabelsätze</h1>
-            <p class="intro">Alle Listen deiner Klassen, automatisch aus den Datenordnern geladen.</p>
-          </div>
-          <img class="learning-photo" src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=240&q=80" alt="Lernmaterial auf einem offenen Buch">
-        </div>
-
-        <form class="code-filter" id="code-form" novalidate>
-          <label for="group-code">Klasse über Code finden</label>
-          <div class="filter-controls">
-            <input id="group-code" name="code" type="text" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="6-stelliger Klassencode" aria-describedby="code-message">
-            <button class="primary-button" type="submit">Filtern</button>
-            <button class="text-button" id="clear-code" type="button">Alle zeigen</button>
-          </div>
-          <p class="message" id="code-message" role="status" aria-live="polite"></p>
+      <section class="home-panel" aria-labelledby="page-title">
+        <p class="eyebrow">DEIN ENGLISCH-LERNRAUM</p>
+        <h1 id="page-title">Womit möchtest du lernen?</h1>
+        <form class="home-code-form" id="home-code-form" novalidate>
+          <label for="home-code">Gib deinen Klassencode ein</label>
+          <input id="home-code" name="code" type="text" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="000000" aria-describedby="home-code-message" autofocus>
+          <button class="primary-button home-submit" type="submit">Klasse öffnen <span aria-hidden="true">→</span></button>
+          <p class="message" id="home-code-message" role="status" aria-live="polite"></p>
         </form>
-
-        <div class="list-toolbar">
-          <p id="results-count" aria-live="polite">Sammlung wird geladen …</p>
-          <label class="grade-filter" for="grade-filter">
-            <span>Jahrgang</span>
-            <select id="grade-filter" name="grade">
-              <option value="all">Alle</option>
-            </select>
-          </label>
-        </div>
-        <div id="results-content" class="results-content" aria-live="polite"></div>
+        <a class="all-lists-link" href="lists.html">Alle Vokabelsätze ansehen <span aria-hidden="true">↗</span></a>
       </section>
     </main>
 
-    <footer class="footer">Vokabular <span>·</span> Englisch lernen, Wort für Wort</footer>
+    <footer class="footer">Wortwerk <span>·</span> Englisch lernen, Wort für Wort</footer>
   </div>
 
   <dialog class="list-dialog" id="list-dialog" aria-labelledby="dialog-title">
