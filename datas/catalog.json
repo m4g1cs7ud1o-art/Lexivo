@@ -1,21 +1,6 @@
 {
   "groups": [
     {
-      "classId": "09Lat",
-      "grade": "09",
-      "accessCode": "099061",
-      "lists": [
-        {
-          "id": "latin-basics",
-          "title": "Latein: Grundwortschatz",
-          "description": "Latein ↔ Deutsch",
-          "language": "Latein",
-          "wordCount": 18,
-          "file": "datas/09Lat/latin-basics/latin-basics.json"
-        }
-      ]
-    },
-    {
       "classId": "12Eng",
       "grade": "12",
       "accessCode": "121864",
