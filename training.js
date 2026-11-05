@@ -29,6 +29,7 @@ let isRevealed = false;
 let hasAnswered = false;
 let correctAnswers = 0;
 let totalAnswerCount = 0;
+let quizSelections = {};
 
 // 9001 START - Validiert Parameter, lädt Liste und startet den angeforderten Modus.
 async function startTrainingPage() {
@@ -62,13 +63,8 @@ async function startTrainingPage() {
     vocabulary = await vocabularyResponse.json();
 
     const shuffledEntries = shuffleEntries(vocabulary.entries);
-    if (sessionMode === "quiz") {
-      deck = createQuizDeck(shuffledEntries);
-      totalAnswerCount = deck.length;
-    } else {
-      deck = sessionMode === "test" ? shuffledEntries.slice(0, normalizeTestCount(shuffledEntries.length)) : shuffledEntries;
-      totalAnswerCount = sessionMode === "test" ? countTestAnswers(deck) : deck.length;
-    }
+    deck = sessionMode === "test" ? shuffledEntries.slice(0, normalizeTestCount(shuffledEntries.length)) : shuffledEntries;
+    totalAnswerCount = sessionMode === "quiz" || sessionMode === "test" ? countTestAnswers(deck) : deck.length;
     configureSessionHeader();
     renderQuestion();
   } catch (error) {
@@ -147,6 +143,7 @@ function renderQuestion() {
 
   hasAnswered = false;
   isRevealed = false;
+  quizSelections = {};
   answerFeedback.textContent = "";
   answerFeedback.className = "answer-feedback";
   questionActions.replaceChildren();
@@ -202,51 +199,69 @@ function handleRevealAnswer() {
 
 // 4001 START - Rendert eine Multiple-Choice-Frage mit vier Antworten.
 function renderQuizQuestion() {
-  const task = deck[currentIndex];
-  const pair = getQuizPair(task, currentDirection);
-  const hintText = task.type === "info"
-    ? "Wähle die passende Zusatzangabe"
-    : "Wähle die richtige Übersetzung";
-  const hint = createElement("p", "question-hint", hintText);
-  const prompt = createElement("h2", "question-word", pair.question);
-  const choices = createElement("div", "choice-list", "");
-  choices.addEventListener("click", handleQuizChoice);
+  const entry = deck[currentIndex];
+  const pair = getQuestionPair(entry, currentDirection);
+  const questionGrid = createElement("div", "quiz-question-grid", "");
+  questionGrid.addEventListener("click", handleQuizChoice);
+  questionGrid.append(createQuizField("translation", pair.question, entry));
 
-  for (const choice of createQuizChoices(task, currentDirection)) {
-    const button = createButton("choice-button", choice, null);
-    button.dataset.answer = choice;
-    choices.append(button);
+  if (entry.z) {
+    questionGrid.append(createQuizField("info", pair.question, entry));
   }
 
-  questionContent.replaceChildren(hint, prompt, choices);
+  questionContent.replaceChildren(questionGrid);
 }
 // 4001 ENDE
 
 // 4002 START - Wertet die Multiple-Choice-Auswahl aus und zeigt die richtige Antwort.
 function handleQuizChoice(event) {
-  const button = event.target.closest("button[data-answer]");
-  if (!button || hasAnswered) {
+  const button = event.target.closest("button[data-answer][data-field]");
+  if (!button || hasAnswered || quizSelections[button.dataset.field] !== undefined) {
+    return;
+  }
+
+  const fieldName = button.dataset.field;
+  quizSelections[fieldName] = button.dataset.answer;
+  const fieldCard = button.closest(".quiz-question-card");
+  for (const fieldButton of fieldCard.querySelectorAll("button[data-answer]")) {
+    fieldButton.disabled = true;
+    if (fieldButton === button) {
+      fieldButton.classList.add("is-selected");
+      fieldButton.setAttribute("aria-pressed", "true");
+    }
+  }
+
+  const entry = deck[currentIndex];
+  const requiredFields = entry.z ? ["translation", "info"] : ["translation"];
+  if (requiredFields.some((requiredField) => quizSelections[requiredField] === undefined)) {
     return;
   }
 
   hasAnswered = true;
-  const pair = getQuizPair(deck[currentIndex], currentDirection);
-  const isCorrect = button.dataset.answer === pair.answer;
-  if (isCorrect) {
-    correctAnswers += 1;
-  }
+  const incorrectAnswers = [];
+  for (const requiredField of requiredFields) {
+    const correctAnswer = requiredField === "info" ? entry.z : getQuestionPair(entry, currentDirection).answer;
+    if (quizSelections[requiredField] === correctAnswer) {
+      correctAnswers += 1;
+    } else {
+      const label = requiredField === "info" ? vocabulary.languageZ || "Zusatzinformation" : "Übersetzung";
+      incorrectAnswers.push(`${label}: ${correctAnswer}`);
+    }
 
-  for (const choiceButton of questionContent.querySelectorAll("button[data-answer]")) {
-    choiceButton.disabled = true;
-    if (choiceButton.dataset.answer === pair.answer) {
-      choiceButton.classList.add("is-correct");
+    for (const fieldButton of questionContent.querySelectorAll(`button[data-field="${requiredField}"]`)) {
+      fieldButton.disabled = true;
+      fieldButton.classList.remove("is-selected");
+      fieldButton.removeAttribute("aria-pressed");
+      if (fieldButton.dataset.answer === correctAnswer) {
+        fieldButton.classList.add("is-correct");
+      } else if (fieldButton.dataset.answer === quizSelections[requiredField]) {
+        fieldButton.classList.add("is-incorrect");
+      }
     }
   }
-  if (!isCorrect) {
-    button.classList.add("is-incorrect");
-  }
 
-  showAnswerFeedback(isCorrect, pair.answer);
+  const isCorrect = incorrectAnswers.length === 0;
+  showAnswerFeedback(isCorrect, incorrectAnswers.join(" · "));
   showNextButton();
 }
 // 4002 ENDE
@@ -367,42 +382,38 @@ function countTestAnswers(entries) {
 }
 // 5012 ENDE
 
-// 4006 START - Erzeugt Übersetzungs- und Zusatzinformationsfragen für den Prüfmodus.
-function createQuizDeck(entries) {
-  const tasks = [];
-  for (const entry of entries) {
-    tasks.push({ entry, type: "translation" });
-    if (entry.z) {
-      tasks.push({ entry, type: "info" });
-    }
+// 4006 START - Erstellt eine getrennte Multiple-Choice-Karte für Übersetzung oder Zusatzinfo.
+function createQuizField(fieldName, promptText, entry) {
+  const field = createElement("section", "quiz-question-card", "");
+  field.dataset.field = fieldName;
+
+  const fieldLabel = fieldName === "info" ? vocabulary.languageZ || "Zusatzinformation" : "Übersetzung";
+  const hintText = fieldName === "info" ? fieldLabel : `${fieldLabel} · ${getDirectionLabel(currentDirection)}`;
+  const questionText = fieldName === "info" ? `Welche Zusatzangabe passt zu „${promptText}“?` : promptText;
+  const hint = createElement("p", "question-hint", hintText);
+  const prompt = createElement("h2", "quiz-question-word", questionText);
+  const choices = createElement("div", "choice-list", "");
+
+  for (const choice of createQuizChoices(fieldName, entry, currentDirection)) {
+    const button = createButton("choice-button", choice, null);
+    button.dataset.answer = choice;
+    button.dataset.field = fieldName;
+    choices.append(button);
   }
 
-  return tasks;
+  field.append(hint, prompt, choices);
+  return field;
 }
 // 4006 ENDE
 
-// 4007 START - Formatiert eine Quizfrage abhängig vom abgefragten Feld.
-function getQuizPair(task, direction) {
-  if (task.type === "info") {
-    const wordPair = getQuestionPair(task.entry, direction);
-    return {
-      question: `Welche Zusatzangabe passt zu „${wordPair.question}“?`,
-      answer: task.entry.z
-    };
-  }
-
-  return getQuestionPair(task.entry, direction);
-}
-// 4007 ENDE
-
 // 4003 START - Erstellt bis zu vier eindeutige Multiple-Choice-Antworten.
-function createQuizChoices(task, direction) {
-  const correctAnswer = getQuizPair(task, direction).answer;
+function createQuizChoices(fieldName, entry, direction) {
+  const correctAnswer = fieldName === "info" ? entry.z : getQuestionPair(entry, direction).answer;
   const choices = [correctAnswer];
   const candidates = shuffleEntries(vocabulary.entries);
 
   for (const candidate of candidates) {
-    const answer = task.type === "info" ? candidate.z : getQuestionPair(candidate, direction).answer;
+    const answer = fieldName === "info" ? candidate.z : getQuestionPair(candidate, direction).answer;
     if (!answer) {
       continue;
     }
@@ -449,7 +460,7 @@ function renderSummary() {
   if (sessionMode === "practice") {
     score.textContent = `${deck.length} Karteikarten durchgesehen.`;
   } else if (sessionMode === "quiz") {
-    score.textContent = `${correctAnswers} von ${totalAnswerCount} Aufgaben richtig.`;
+    score.textContent = `${correctAnswers} von ${totalAnswerCount} Antworten richtig.`;
   } else {
     score.textContent = `${correctAnswers} von ${totalAnswerCount} Antworten richtig.`;
   }
@@ -500,8 +511,7 @@ function getDirectionLabel(direction) {
 // 9010 START - Aktualisiert Fortschrittsanzeige und Zähler.
 function updateProgress(isComplete = false) {
   const completedCount = isComplete ? deck.length : currentIndex;
-  const progressUnit = sessionMode === "quiz" ? "Aufgaben" : "Vokabeln";
-  progressLabel.textContent = `${Math.min(currentIndex + 1, deck.length)} von ${deck.length} ${progressUnit}`;
+  progressLabel.textContent = `${Math.min(currentIndex + 1, deck.length)} von ${deck.length} Vokabeln`;
   progressFill.style.width = `${(completedCount / deck.length) * 100}%`;
 }
 // 9010 ENDE

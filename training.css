@@ -59,6 +59,50 @@
   background: var(--surface);
 }
 
+.quiz-question-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.quiz-question-card {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--line);
+  background: white;
+}
+
+.quiz-question-card .question-hint {
+  min-height: 28px;
+  margin-bottom: 8px;
+}
+
+.quiz-question-word {
+  min-height: 48px;
+  margin: 0 0 13px;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.quiz-question-card .choice-list {
+  gap: 7px;
+}
+
+.quiz-question-card .choice-button {
+  min-height: 40px;
+  padding: 8px 10px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.quiz-question-card .choice-button.is-selected {
+  border-color: var(--green);
+  background: #edf3eb;
+}
+
 .question-hint {
   margin-bottom: 12px;
   color: var(--muted);
@@ -241,6 +285,10 @@
 
   .question-panel {
     min-height: 310px;
+  }
+
+  .quiz-question-grid {
+    grid-template-columns: 1fr;
   }
 
   .answer-form {
