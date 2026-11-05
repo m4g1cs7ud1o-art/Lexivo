@@ -1,7 +1,7 @@
 {
   "groups": [
     {
-      "classId": "09",
+      "classId": "09Lat",
       "grade": "09",
       "accessCode": "099061",
       "lists": [
@@ -11,12 +11,12 @@
           "description": "Latein ↔ Deutsch",
           "language": "Latein",
           "wordCount": 18,
-          "file": "datas/09/latin-basics/latin-basics.json"
+          "file": "datas/09Lat/latin-basics/latin-basics.json"
         }
       ]
     },
     {
-      "classId": "12T2",
+      "classId": "12Eng",
       "grade": "12",
       "accessCode": "121864",
       "lists": [
@@ -26,7 +26,7 @@
           "description": "Englisch ↔ Deutsch",
           "language": "Englisch",
           "wordCount": 53,
-          "file": "datas/12T2/african-american-experiences/african-american-experiences.json"
+          "file": "datas/12Eng/african-american-experiences/african-american-experiences.json"
         },
         {
           "id": "us-civil-rights-movement",
@@ -34,7 +34,7 @@
           "description": "Englisch ↔ Deutsch",
           "language": "Englisch",
           "wordCount": 24,
-          "file": "datas/12T2/us-civil-rights-movement/us-civil-rights-movement.json"
+          "file": "datas/12Eng/us-civil-rights-movement/us-civil-rights-movement.json"
         },
         {
           "id": "us-history",
@@ -42,7 +42,7 @@
           "description": "Englisch ↔ Deutsch",
           "language": "Englisch",
           "wordCount": 51,
-          "file": "datas/12T2/us-history/us-history.json"
+          "file": "datas/12Eng/us-history/us-history.json"
         },
         {
           "id": "westward-movement",
@@ -50,7 +50,7 @@
           "description": "Englisch ↔ Deutsch",
           "language": "Englisch",
           "wordCount": 17,
-          "file": "datas/12T2/westward-movement/westward-movement.json"
+          "file": "datas/12Eng/westward-movement/westward-movement.json"
         }
       ]
     }

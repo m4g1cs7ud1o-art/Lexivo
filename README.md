@@ -4,9 +4,9 @@ Statische Vokabelsammlung für GitHub Pages. Gruppencodes dienen zum Finden der 
 
 ## Listen pflegen
 
-Jede Klasse oder Jahrgangsgruppe bekommt einen Ordner unter `datas/`, zum Beispiel `datas/12T2/` oder `datas/09/`. Jeder Vokabelsatz liegt in einem eigenen Unterordner. Der Ordnername ist gleichzeitig der Name der Vokabeldatei ohne `.json`.
+Jede Klasse oder Jahrgangsgruppe bekommt einen Ordner unter `datas/`, zum Beispiel `datas/12Eng/` oder `datas/09Lat/`. Jeder Vokabelsatz liegt in einem eigenen Unterordner. Der Ordnername ist gleichzeitig der Name der Vokabeldatei ohne `.json`.
 
-Ein Gruppencode besteht aus sechs Ziffern. Die ersten beiden Ziffern entsprechen dem Jahrgang, zum Beispiel `05` für `05G5` oder `12` für `12T2`. Bestehende Codes bleiben erhalten; für neue Klassen wird automatisch ein eindeutiger Code erzeugt. Der Code ist nur eine Auswahlhilfe, keine Zugangssperre.
+Ein Gruppencode besteht aus sechs Ziffern. Die ersten beiden Ziffern entsprechen dem Jahrgang, zum Beispiel `09` für `09Lat` oder `12` für `12Eng`. Bestehende Codes bleiben erhalten; für neue Klassen wird automatisch ein eindeutiger Code erzeugt. Der Code ist nur eine Auswahlhilfe, keine Zugangssperre.
 
 Eine Vokabeldatei verwendet dieses Format:
 
@@ -25,7 +25,7 @@ Eine Vokabeldatei verwendet dieses Format:
 Lege daneben die Datei `meta.json` mit Titel und Beschreibung ab. Ein vollständiger Eintrag sieht so aus:
 
 ```text
-datas/12T2/us-history/
+datas/12Eng/us-history/
   us-history.json
   meta.json
 ```
@@ -38,7 +38,7 @@ Inhalt von `meta.json`:
   "title": "US History",
   "description": "Geschichte der Vereinigten Staaten",
   "wordCount": 51,
-  "file": "datas/12T2/us-history/us-history.json"
+  "file": "datas/12Eng/us-history/us-history.json"
 }
 ```
 
