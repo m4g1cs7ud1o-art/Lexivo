@@ -83,7 +83,7 @@ function handleCodeSubmit(event) {
   }
 
   gradeFilter.value = "all";
-  setStatus(`Klasse ${codeFilterGroup.classId} wird angezeigt.`);
+  setStatus("Die Listen für diesen Klassencode werden angezeigt.");
   renderVisibleGroups();
 }
 // 2001 ENDE
@@ -108,7 +108,7 @@ function applyInitialCode() {
     return;
   }
 
-  setStatus(`Klasse ${codeFilterGroup.classId} wird angezeigt.`);
+  setStatus("Die Listen für diesen Klassencode werden angezeigt.");
 }
 // 2006 ENDE
 
@@ -178,17 +178,18 @@ function renderVisibleGroups() {
 }
 // 1005 ENDE
 
-// 1006 START - Zeigt die Vokabellisten nach Jahrgang und Klasse sortiert an.
+// 1006 START - Zeigt die Vokabellisten nach Jahrgang und Sprache sortiert an.
 function renderGroups(groups) {
   resultsContent.replaceChildren();
+  const languageGroups = groupListsByLanguage(groups);
 
   let listCount = 0;
   for (const group of groups) {
     listCount += group.lists.length;
   }
-  updateResultsCount(groups.length, listCount);
+  updateResultsCount(languageGroups, listCount);
 
-  if (groups.length === 0) {
+  if (languageGroups.length === 0) {
     showEmptyState("Für diese Auswahl sind noch keine Vokabelsätze hinterlegt.");
     return;
   }
@@ -196,36 +197,71 @@ function renderGroups(groups) {
   let currentGrade = "";
   let gradeSection = null;
 
-  for (const group of groups) {
-    if (group.grade !== currentGrade) {
-      currentGrade = group.grade;
+  for (const languageGroup of languageGroups) {
+    if (languageGroup.grade !== currentGrade) {
+      currentGrade = languageGroup.grade;
       gradeSection = document.createElement("section");
       gradeSection.className = "grade-section";
       const gradeTitle = document.createElement("h2");
       gradeTitle.className = "grade-title";
-      gradeTitle.textContent = `Jahrgang ${group.grade}`;
+      gradeTitle.textContent = `Jahrgang ${languageGroup.grade}`;
       gradeSection.append(gradeTitle);
       resultsContent.append(gradeSection);
     }
 
-    const classSection = document.createElement("section");
-    classSection.className = "class-section";
-    const classHeading = document.createElement("h3");
-    classHeading.className = "class-heading";
-    classHeading.textContent = group.classId;
+    const languageSection = document.createElement("section");
+    languageSection.className = "language-section";
+    const languageHeading = document.createElement("h3");
+    languageHeading.className = "class-heading";
+    languageHeading.textContent = languageGroup.language;
     const listGrid = document.createElement("div");
     listGrid.className = "list-grid";
-    classSection.append(classHeading, listGrid);
-    gradeSection.append(classSection);
-    appendListCards(listGrid, group);
+    languageSection.append(languageHeading, listGrid);
+    gradeSection.append(languageSection);
+    appendListCards(listGrid, languageGroup.lists);
   }
 }
 // 1006 ENDE
 
-// 1007 START - Erzeugt die Listenkarten einer Klasse.
-function appendListCards(container, group) {
-  for (let index = 0; index < group.lists.length; index += 1) {
-    const list = group.lists[index];
+// 1011 START - Gruppiert Listen derselben Jahrgangsstufe nach ihrer Sprache.
+function groupListsByLanguage(groups) {
+  const languageGroups = [];
+
+  for (const group of groups) {
+    for (const list of group.lists) {
+      let languageGroup = null;
+      for (const candidate of languageGroups) {
+        if (candidate.grade === group.grade && candidate.language === list.language) {
+          languageGroup = candidate;
+          break;
+        }
+      }
+
+      if (!languageGroup) {
+        languageGroup = { grade: group.grade, language: list.language, lists: [] };
+        languageGroups.push(languageGroup);
+      }
+
+      languageGroup.lists.push({ group, list });
+    }
+  }
+
+  return languageGroups.sort(compareLanguageGroups);
+}
+// 1011 ENDE
+
+// 1012 START - Sortiert Sprachgruppen nach Jahrgang und anschließend nach Sprache.
+function compareLanguageGroups(firstGroup, secondGroup) {
+  const gradeOrder = firstGroup.grade.localeCompare(secondGroup.grade, "de", { numeric: true });
+  return gradeOrder || firstGroup.language.localeCompare(secondGroup.language, "de");
+}
+// 1012 ENDE
+
+// 1007 START - Erzeugt Listenkarten mit interner Klassenkennung für Aktionen.
+function appendListCards(container, groupedLists) {
+  for (let index = 0; index < groupedLists.length; index += 1) {
+    const group = groupedLists[index].group;
+    const list = groupedLists[index].list;
     const card = document.createElement("article");
     card.className = "list-card";
 
@@ -302,7 +338,7 @@ async function handleListAction(event) {
 function openModeDialog(group, list) {
   selectedGroup = group;
   selectedList = list;
-  document.querySelector("#mode-list-class").textContent = group.classId;
+  document.querySelector("#mode-list-class").textContent = `Jahrgang ${group.grade} · ${list.language}`;
   document.querySelector("#mode-list-title").textContent = `${list.title} · ${list.wordCount} Wörter`;
   testCount.max = String(Math.max(1, list.wordCount));
   testCount.value = String(Math.min(20, Math.max(1, list.wordCount)));
@@ -356,7 +392,7 @@ function startSelectedMode(event) {
 
 // 1009 START - Zeigt die Vokabeln und Sprachrichtungen im Dialog an.
 function renderListDialog(group, list, vocabulary) {
-  document.querySelector("#dialog-class").textContent = `${group.classId} · ${vocabulary.languageX} / ${vocabulary.languageY}`;
+  document.querySelector("#dialog-class").textContent = `${vocabulary.languageX} → ${vocabulary.languageY}`;
   document.querySelector("#dialog-title").textContent = list.title;
   document.querySelector("#dialog-description").textContent = `${vocabulary.entries.length} Vokabeln`;
 
@@ -428,9 +464,15 @@ function compareGroups(firstGroup, secondGroup) {
 }
 // 9003 ENDE
 
-// 9004 START - Aktualisiert die sichtbare Anzahl von Klassen und Listen.
-function updateResultsCount(groupCount, listCount) {
-  resultsCount.textContent = `${listCount} Vokabelsätze · ${groupCount} Klassen`;
+// 9004 START - Aktualisiert die sichtbare Anzahl von Sprachen und Listen.
+function updateResultsCount(languageGroups, listCount) {
+  const languages = new Set();
+  for (const languageGroup of languageGroups) {
+    languages.add(languageGroup.language);
+  }
+
+  const languageSummary = languages.size === 1 ? [...languages][0] : `${languages.size} Sprachen`;
+  resultsCount.textContent = `${listCount} Vokabelsätze · ${languageSummary}`;
 }
 // 9004 ENDE
 
@@ -458,7 +500,7 @@ function validateCatalog(data) {
     knownCodes.add(group.accessCode);
 
     for (const list of group.lists) {
-      if (!list.id || !list.title || !list.file || !Number.isInteger(list.wordCount)) {
+      if (!list.id || !list.title || !list.file || !list.language || !Number.isInteger(list.wordCount)) {
         return false;
       }
     }

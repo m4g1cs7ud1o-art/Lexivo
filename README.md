@@ -20,6 +20,8 @@ Eine Vokabeldatei verwendet dieses Format:
 }
 ```
 
+`languageX` bestimmt die Sprache, unter der die Liste auf der Website gruppiert wird. So können innerhalb eines Jahrgangs zum Beispiel Englisch-, Französisch- oder Spanischlisten stehen. `languageY` bezeichnet jeweils die Übersetzungssprache.
+
 Lege daneben die Datei `meta.json` mit Titel und Beschreibung ab. Ein vollständiger Eintrag sieht so aus:
 
 ```text

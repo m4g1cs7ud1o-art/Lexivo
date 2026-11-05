@@ -123,7 +123,7 @@ function shuffleEntries(entries) {
 // 9006 START - Zeigt Klassenname, Liste, Modus und Fortschritt an.
 function configureSessionHeader() {
   const modeNames = { practice: "Üben", quiz: "Prüfen", test: "Test" };
-  sessionClassLabel.textContent = group.classId;
+  sessionClassLabel.textContent = `Jahrgang ${group.grade} · ${vocabulary.languageX}`;
   sessionTitle.textContent = list.title;
   sessionModeLabel.textContent = modeNames[sessionMode];
   sessionDirectionLabel.textContent = sessionMode === "quiz" ? "Zufällige Richtung" : getDirectionLabel(requestedDirection);

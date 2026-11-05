@@ -9,6 +9,7 @@
           "id": "african-american-experiences",
           "title": "African American Experiences",
           "description": "Englisch ↔ Deutsch",
+          "language": "Englisch",
           "wordCount": 53,
           "file": "datas/12T2/african-american-experiences/african-american-experiences.json"
         },
@@ -16,6 +17,7 @@
           "id": "us-civil-rights-movement",
           "title": "US Civil Rights Movement",
           "description": "Englisch ↔ Deutsch",
+          "language": "Englisch",
           "wordCount": 24,
           "file": "datas/12T2/us-civil-rights-movement/us-civil-rights-movement.json"
         },
@@ -23,6 +25,7 @@
           "id": "us-history",
           "title": "US History",
           "description": "Englisch ↔ Deutsch",
+          "language": "Englisch",
           "wordCount": 51,
           "file": "datas/12T2/us-history/us-history.json"
         },
@@ -30,6 +33,7 @@
           "id": "westward-movement",
           "title": "Westward Movement",
           "description": "Englisch ↔ Deutsch",
+          "language": "Englisch",
           "wordCount": 17,
           "file": "datas/12T2/westward-movement/westward-movement.json"
         }
