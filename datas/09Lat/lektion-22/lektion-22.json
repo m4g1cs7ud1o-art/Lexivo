@@ -1,0 +1,147 @@
+{
+  "languageX": "Latein",
+  "languageZ": "Informationen",
+  "languageY": "Deutsch",
+  "entries": [
+    {
+      "x": "gratia",
+      "z": "gratiae f.",
+      "y": "der Dank, die Gunst, die Beliebtheit"
+    },
+    {
+      "x": "gratias agere",
+      "z": "gratias ago, egi, actum",
+      "y": "danken, Dank sagen"
+    },
+    {
+      "x": "maxime",
+      "z": "Adv.",
+      "y": "am meisten, ganz besonders"
+    },
+    {
+      "x": "aurum",
+      "z": "auri n.",
+      "y": "das Gold"
+    },
+    {
+      "x": "prudens",
+      "z": "Gen. prudentis; Adv. prudenter",
+      "y": "klug"
+    },
+    {
+      "x": "fides",
+      "z": "fidei f.",
+      "y": "der Schutz, der Beistand; die Zuverlässigkeit, die Treue"
+    },
+    {
+      "x": "temptare",
+      "z": "tempto",
+      "y": "versuchen, prüfen, auf die Probe stellen"
+    },
+    {
+      "x": "arbor",
+      "z": "arboris f.",
+      "y": "der Baum"
+    },
+    {
+      "x": "trahere",
+      "z": "traho, traxi, tractum",
+      "y": "ziehen"
+    },
+    {
+      "x": "tenere",
+      "z": "teneo, tenui, tentum",
+      "y": "halten"
+    },
+    {
+      "x": "mirus",
+      "z": "-a, -um",
+      "y": "wunderbar, erstaunlich"
+    },
+    {
+      "x": "conspicere",
+      "z": "conspicio, conspexi, conspectum",
+      "y": "erblicken, sehen"
+    },
+    {
+      "x": "fingere",
+      "z": "fingo, finxi, fictum",
+      "y": "vorstellen, ausdenken"
+    },
+    {
+      "x": "(ab-/ad-/ex-/per-/red-/sub-)iens",
+      "z": "Gen. euntis",
+      "y": "PPA von ire"
+    },
+    {
+      "x": "cenare",
+      "z": "ceno",
+      "y": "speisen, die Hauptmahlzeit zu sich nehmen"
+    },
+    {
+      "x": "poculum",
+      "z": "poculi n.",
+      "y": "der Becher"
+    },
+    {
+      "x": "vinum",
+      "z": "vini n.",
+      "y": "der Wein"
+    },
+    {
+      "x": "os",
+      "z": "oris n.",
+      "y": "der Mund"
+    },
+    {
+      "x": "cibus",
+      "z": "cibi m.",
+      "y": "die Speise"
+    },
+    {
+      "x": "divitiae",
+      "z": "divitiarum f. Pl.",
+      "y": "der Reichtum"
+    },
+    {
+      "x": "modo",
+      "z": "Adv.",
+      "y": "bloß, nur, gerade (eben)"
+    },
+    {
+      "x": "sic",
+      "z": "Adv.",
+      "y": "so"
+    },
+    {
+      "x": "torquere",
+      "z": "torqueo, torsi, tortum",
+      "y": "foltern"
+    },
+    {
+      "x": "stultus",
+      "z": "-a, -um",
+      "y": "dumm"
+    },
+    {
+      "x": "venia",
+      "z": "veniae f.",
+      "y": "die Verzeihung"
+    },
+    {
+      "x": "error",
+      "z": "erroris m.",
+      "y": "die Irrfahrt; der Irrtum, der Fehler"
+    },
+    {
+      "x": "nisi",
+      "z": "Subj.",
+      "y": "wenn nicht"
+    },
+    {
+      "x": "liberare",
+      "z": "libero",
+      "y": "befreien"
+    }
+  ]
+}
