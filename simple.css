@@ -80,6 +80,14 @@ select {
   letter-spacing: 0.08em;
 }
 
+.topbar-link {
+  text-decoration: none;
+}
+
+.topbar-link:hover {
+  color: var(--green);
+}
+
 .collection {
   padding: 46px 0 52px;
 }
