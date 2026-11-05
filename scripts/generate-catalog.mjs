@@ -76,6 +76,7 @@ async function readVocabularyFile(classId, listId, filePath, metadata) {
     title: metadata.title || createTitle(listId),
     description: metadata.description || `${vocabulary.languageX} ↔ ${vocabulary.languageY}`,
     language: metadata.language || vocabulary.languageX,
+    languageY: vocabulary.languageY,
     wordCount: vocabulary.entries.length,
     file: path.relative(projectDirectory, filePath).split(path.sep).join("/")
   };

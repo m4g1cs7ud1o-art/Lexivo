@@ -163,7 +163,13 @@ function renderPracticeQuestion() {
   const prompt = createElement("h2", "question-word", pair.question);
   const answer = createElement("p", "practice-answer", "");
   answer.id = "practice-answer";
-  questionContent.replaceChildren(hint, prompt, answer);
+  const questionElements = [hint, prompt];
+  const info = createQuestionInfo(deck[currentIndex]);
+  if (info) {
+    questionElements.push(info);
+  }
+  questionElements.push(answer);
+  questionContent.replaceChildren(...questionElements);
 
   const revealButton = createButton("primary-button", "Antwort zeigen", handleRevealAnswer);
   questionActions.append(revealButton);
@@ -187,6 +193,7 @@ function renderQuizQuestion() {
   const pair = getQuestionPair(deck[currentIndex], currentDirection);
   const hint = createElement("p", "question-hint", "Wähle die richtige Übersetzung");
   const prompt = createElement("h2", "question-word", pair.question);
+  const info = createQuestionInfo(deck[currentIndex]);
   const choices = createElement("div", "choice-list", "");
   choices.addEventListener("click", handleQuizChoice);
 
@@ -196,7 +203,12 @@ function renderQuizQuestion() {
     choices.append(button);
   }
 
-  questionContent.replaceChildren(hint, prompt, choices);
+  const questionElements = [hint, prompt];
+  if (info) {
+    questionElements.push(info);
+  }
+  questionElements.push(choices);
+  questionContent.replaceChildren(...questionElements);
 }
 // 4001 ENDE
 
@@ -234,6 +246,7 @@ function renderTestQuestion() {
   const pair = getQuestionPair(deck[currentIndex], currentDirection);
   const hint = createElement("p", "question-hint", "Tippe die Übersetzung ein");
   const prompt = createElement("h2", "question-word", pair.question);
+  const info = createQuestionInfo(deck[currentIndex]);
   const form = createElement("form", "answer-form", "");
   const input = document.createElement("input");
   input.type = "text";
@@ -245,10 +258,26 @@ function renderTestQuestion() {
   submit.type = "submit";
   form.append(input, submit);
   form.addEventListener("submit", handleTestAnswer);
-  questionContent.replaceChildren(hint, prompt, form);
+  const questionElements = [hint, prompt];
+  if (info) {
+    questionElements.push(info);
+  }
+  questionElements.push(form);
+  questionContent.replaceChildren(...questionElements);
   input.focus();
 }
 // 5001 ENDE
+
+// 5010 START - Erstellt bei vorhandener Zusatzspalte einen Hinweis zur aktuellen Vokabel.
+function createQuestionInfo(entry) {
+  if (!entry.z) {
+    return null;
+  }
+
+  const label = vocabulary.languageZ || "Zusatzinformation";
+  return createElement("p", "question-note", `${label}: ${entry.z}`);
+}
+// 5010 ENDE
 
 // 5002 START - Prüft die eingetippte Antwort auf Gleichheit ohne Groß-/Kleinschreibung.
 function handleTestAnswer(event) {
@@ -369,13 +398,15 @@ function getQuestionDirection() {
 
 // 9009 START - Formatiert eine Abfragerichtung für die Oberfläche.
 function getDirectionLabel(direction) {
+  const languageX = vocabulary.languageX || "Sprache X";
+  const languageY = vocabulary.languageY || "Sprache Y";
   if (direction === "yx") {
-    return "Deutsch → Englisch";
+    return `${languageY} → ${languageX}`;
   }
   if (direction === "random") {
     return "Zufällige Richtung";
   }
-  return "Englisch → Deutsch";
+  return `${languageX} → ${languageY}`;
 }
 // 9009 ENDE
 

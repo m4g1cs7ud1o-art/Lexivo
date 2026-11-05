@@ -1,6 +1,22 @@
 {
   "groups": [
     {
+      "classId": "09Lat",
+      "grade": "09",
+      "accessCode": "091864",
+      "lists": [
+        {
+          "id": "lektion-22",
+          "title": "Lektion 22",
+          "description": "Mythos als Ratgeber",
+          "language": "Latein",
+          "languageY": "Deutsch",
+          "wordCount": 28,
+          "file": "datas/09Lat/lektion-22/lektion-22.json"
+        }
+      ]
+    },
+    {
       "classId": "12Eng",
       "grade": "12",
       "accessCode": "121864",
@@ -10,6 +26,7 @@
           "title": "African American Experiences",
           "description": "Englisch ↔ Deutsch",
           "language": "Englisch",
+          "languageY": "Deutsch",
           "wordCount": 53,
           "file": "datas/12Eng/african-american-experiences/african-american-experiences.json"
         },
@@ -18,6 +35,7 @@
           "title": "US Civil Rights Movement",
           "description": "Englisch ↔ Deutsch",
           "language": "Englisch",
+          "languageY": "Deutsch",
           "wordCount": 24,
           "file": "datas/12Eng/us-civil-rights-movement/us-civil-rights-movement.json"
         },
@@ -26,6 +44,7 @@
           "title": "US History",
           "description": "Englisch ↔ Deutsch",
           "language": "Englisch",
+          "languageY": "Deutsch",
           "wordCount": 51,
           "file": "datas/12Eng/us-history/us-history.json"
         },
@@ -34,6 +53,7 @@
           "title": "Westward Movement",
           "description": "Englisch ↔ Deutsch",
           "language": "Englisch",
+          "languageY": "Deutsch",
           "wordCount": 17,
           "file": "datas/12Eng/westward-movement/westward-movement.json"
         }

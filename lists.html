@@ -88,8 +88,8 @@
 
       <fieldset class="mode-setting" id="practice-settings">
         <legend>Abfragerichtung</legend>
-        <label><input type="radio" name="practice-direction" value="xy" checked> Englisch → Deutsch</label>
-        <label><input type="radio" name="practice-direction" value="yx"> Deutsch → Englisch</label>
+        <label><input type="radio" name="practice-direction" value="xy" checked> <span id="practice-direction-xy-label">Sprache X → Sprache Y</span></label>
+        <label><input type="radio" name="practice-direction" value="yx"> <span id="practice-direction-yx-label">Sprache Y → Sprache X</span></label>
       </fieldset>
 
       <div class="mode-note" id="quiz-settings" hidden>Die Abfragerichtung wechselt zufällig.</div>
@@ -100,8 +100,8 @@
         <label for="test-direction">Abfragerichtung</label>
         <select id="test-direction">
           <option value="random">Zufällig wechseln</option>
-          <option value="xy">Englisch → Deutsch</option>
-          <option value="yx">Deutsch → Englisch</option>
+          <option value="xy" id="test-direction-xy-label">Sprache X → Sprache Y</option>
+          <option value="yx" id="test-direction-yx-label">Sprache Y → Sprache X</option>
         </select>
       </div>
 

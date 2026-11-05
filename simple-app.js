@@ -335,6 +335,7 @@ function openModeDialog(group, list) {
   selectedList = list;
   document.querySelector("#mode-list-class").textContent = `Jahrgang ${group.grade} · ${list.language}`;
   document.querySelector("#mode-list-title").textContent = `${list.title} · ${list.wordCount} Wörter`;
+  updateDirectionLabels(list.language, list.languageY);
   testCount.max = String(Math.max(1, list.wordCount));
   testCount.value = String(Math.min(20, Math.max(1, list.wordCount)));
   updateTestCount();
@@ -343,6 +344,15 @@ function openModeDialog(group, list) {
   modeDialog.showModal();
 }
 // 3001 ENDE
+
+// 3010 START - Setzt die Richtungsoptionen passend zum Sprachpaar des Vokabelsatzes.
+function updateDirectionLabels(languageX, languageY) {
+  document.querySelector("#practice-direction-xy-label").textContent = `${languageX} → ${languageY}`;
+  document.querySelector("#practice-direction-yx-label").textContent = `${languageY} → ${languageX}`;
+  document.querySelector("#test-direction-xy-label").textContent = `${languageX} → ${languageY}`;
+  document.querySelector("#test-direction-yx-label").textContent = `${languageY} → ${languageX}`;
+}
+// 3010 ENDE
 
 // 3002 START - Zeigt nur die Einstellungen des ausgewählten Lernmodus.
 function updateModeSettings() {
@@ -401,6 +411,14 @@ function renderListDialog(group, list, vocabulary) {
     const wordY = document.createElement("span");
     wordY.textContent = entry.y;
     row.append(wordX, wordY);
+
+    if (entry.z) {
+      const wordInfo = document.createElement("span");
+      wordInfo.className = "word-info";
+      wordInfo.textContent = `${vocabulary.languageZ || "Zusatzinformation"}: ${entry.z}`;
+      row.append(wordInfo);
+    }
+
     wordContainer.append(row);
   }
 }
@@ -489,7 +507,7 @@ function validateCatalog(data) {
     knownCodes.add(group.accessCode);
 
     for (const list of group.lists) {
-      if (!list.id || !list.title || !list.file || !list.language || !Number.isInteger(list.wordCount)) {
+      if (!list.id || !list.title || !list.file || !list.language || !list.languageY || !Number.isInteger(list.wordCount)) {
         return false;
       }
     }

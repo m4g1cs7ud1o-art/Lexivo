@@ -20,7 +20,18 @@ Eine Vokabeldatei verwendet dieses Format:
 }
 ```
 
-`languageX` bestimmt die Sprache, unter der die Liste auf der Website gruppiert wird. So können innerhalb eines Jahrgangs zum Beispiel Englisch-, Französisch-, Spanisch- oder Lateinlisten stehen. `languageY` bezeichnet jeweils die Übersetzungssprache.
+`languageX` bestimmt die Sprache, unter der die Liste auf der Website gruppiert wird. So können innerhalb eines Jahrgangs zum Beispiel Englisch-, Französisch-, Spanisch- oder Lateinlisten stehen. `languageY` bezeichnet jeweils die Übersetzungssprache. Optional kannst du mit `languageZ` ein Feld für Zusatzinformationen angeben und jedem Eintrag ein entsprechendes `z`-Feld hinzufügen; die Zusatzinformation erscheint bei der Wortansicht und während des Lernens.
+
+```json
+{
+  "languageX": "Latein",
+  "languageY": "Deutsch",
+  "languageZ": "Informationen",
+  "entries": [
+    { "x": "gratia", "y": "der Dank", "z": "gratiae f." }
+  ]
+}
+```
 
 Lege daneben die Datei `meta.json` mit Titel und Beschreibung ab. Ein vollständiger Eintrag sieht so aus:
 
