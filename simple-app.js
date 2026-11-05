@@ -199,7 +199,9 @@ function renderGroups(groups) {
       gradeSection.className = "grade-section";
       const gradeTitle = document.createElement("h2");
       gradeTitle.className = "grade-title";
-      gradeTitle.textContent = `Jahrgang ${languageGroup.grade}`;
+      gradeTitle.textContent = codeFilterGroup
+        ? `Jahrgang ${languageGroup.grade} - ${codeFilterGroup.classId}`
+        : `Jahrgang ${languageGroup.grade}`;
       gradeSection.append(gradeTitle);
       resultsContent.append(gradeSection);
     }

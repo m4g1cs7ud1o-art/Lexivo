@@ -42,6 +42,9 @@ function validateClassConfiguration(configuration) {
     if (!Array.isArray(group.lists) || group.lists.some((listId) => typeof listId !== "string") || new Set(group.lists).size !== group.lists.length) {
       throw new Error(`${group.classId}: lists muss eindeutige Listen-IDs enthalten.`);
     }
+    if (group.dataFolder !== undefined && !/^[A-Za-z0-9]+$/.test(group.dataFolder)) {
+      throw new Error(`${group.classId}: dataFolder darf nur Buchstaben und Ziffern enthalten.`);
+    }
   }
 }
 // 1002 ENDE
@@ -92,17 +95,17 @@ async function readVocabularyFile(classId, listId, filePath, metadata) {
 // 1004 ENDE
 
 // 1008 START - Liest meta.json und die gleichnamige Vokabeldatei eines Listenordners.
-async function readVocabularyFolder(classId, folderName) {
-  const folderPath = path.join(dataDirectory, classId, folderName);
+async function readVocabularyFolder(dataFolder, folderName) {
+  const folderPath = path.join(dataDirectory, dataFolder, folderName);
   const metadataPath = path.join(folderPath, "meta.json");
   const vocabularyPath = path.join(folderPath, `${folderName}.json`);
   const metadata = JSON.parse(await readFile(metadataPath, "utf8"));
 
   if (!metadata || metadata.id !== folderName || typeof metadata.title !== "string" || typeof metadata.description !== "string") {
-    throw new Error(`${classId}/${folderName}/meta.json: id muss dem Ordnernamen entsprechen; title und description müssen Texte sein.`);
+    throw new Error(`${dataFolder}/${folderName}/meta.json: id muss dem Ordnernamen entsprechen; title und description müssen Texte sein.`);
   }
 
-  return readVocabularyFile(classId, folderName, vocabularyPath, metadata);
+  return readVocabularyFile(dataFolder, folderName, vocabularyPath, metadata);
 }
 // 1008 ENDE
 
@@ -112,14 +115,15 @@ async function discoverGroups(configuredGroups) {
 
   for (const configuredGroup of configuredGroups) {
     const classId = configuredGroup.classId;
-    const classDirectory = path.join(dataDirectory, classId);
+    const dataFolder = configuredGroup.dataFolder || classId;
+    const classDirectory = path.join(dataDirectory, dataFolder);
     const entries = await readdir(classDirectory, { withFileTypes: true });
 
     const lists = [];
     for (const listId of configuredGroup.lists) {
       const listFolder = entries.find((entry) => entry.isDirectory() && entry.name === listId);
       if (listFolder) {
-        lists.push(await readVocabularyFolder(classId, listId));
+        lists.push(await readVocabularyFolder(dataFolder, listId));
         continue;
       }
 
@@ -129,7 +133,7 @@ async function discoverGroups(configuredGroups) {
       }
 
       const filePath = path.join(classDirectory, legacyFile.name);
-      lists.push(await readVocabularyFile(classId, listId, filePath, {}));
+      lists.push(await readVocabularyFile(dataFolder, listId, filePath, {}));
     }
 
     groups.push({

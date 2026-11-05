@@ -1,3 +1,4 @@
+Die Verwaltung liegt außerhalb der Schüleroberfläche in `datas/classes.json`. Dort legst du pro Gruppe `classId`, Jahrgang, Klassencode und die angezeigten Listen-IDs fest. `dataFolder` nennt den Ordner, in dem die Vokabeldateien liegen; so kann zum Beispiel die sichtbare Klasse `12T2` ihre Daten aus `datas/12Eng/` beziehen. Nur eingetragene Listen-IDs gelangen in den Website-Katalog; entfernst du eine Listen-ID, wird die Liste nicht mehr angezeigt. Gruppencodes müssen sechs Ziffern haben und mit dem Jahrgang beginnen.
 # Vokabular
 
 Statische Vokabelsammlung für GitHub Pages. Gruppencodes dienen zum Finden der passenden Klasse; die Dateien im Repository sind öffentlich und nicht durch den Code geschützt.
@@ -12,6 +13,7 @@ Beispiel für eine Zuordnung:
 {
   "classId": "09Lat",
   "grade": "09",
+  "dataFolder": "09Lat",
   "accessCode": "091864",
   "lists": ["lektion-22"]
 }
