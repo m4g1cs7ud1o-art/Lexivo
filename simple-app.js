@@ -8,7 +8,6 @@ let selectedList = null;
 const codeForm = document.querySelector("#code-form");
 const codeInput = document.querySelector("#group-code");
 const codeMessage = document.querySelector("#code-message");
-const clearCodeButton = document.querySelector("#clear-code");
 const gradeFilter = document.querySelector("#grade-filter");
 const resultsCount = document.querySelector("#results-count");
 const resultsContent = document.querySelector("#results-content");
@@ -22,7 +21,6 @@ const testCountValue = document.querySelector("#test-count-value");
 function startApp() {
   codeForm.addEventListener("submit", handleCodeSubmit);
   codeInput.addEventListener("input", handleCodeInput);
-  clearCodeButton.addEventListener("click", handleClearCode);
   gradeFilter.addEventListener("change", handleGradeChange);
   resultsContent.addEventListener("click", handleListAction);
   document.querySelector("#dialog-close").addEventListener("click", closeListDialog);
@@ -91,6 +89,14 @@ function handleCodeSubmit(event) {
 // 2002 START - Beschränkt das Codefeld auf sechs Ziffern.
 function handleCodeInput() {
   codeInput.value = codeInput.value.replace(/\D/g, "").slice(0, 6);
+  setStatus("");
+
+  if (!codeInput.value && codeFilterGroup) {
+    codeFilterGroup = null;
+    gradeFilter.value = "all";
+    window.history.replaceState(null, "", "lists.html");
+    renderVisibleGroups();
+  }
 }
 // 2002 ENDE
 
@@ -111,17 +117,6 @@ function applyInitialCode() {
   setStatus("Die Listen für diesen Klassencode werden angezeigt.");
 }
 // 2006 ENDE
-
-// 2003 START - Entfernt den Klassencodefilter und zeigt wieder alle Listen.
-function handleClearCode() {
-  codeInput.value = "";
-  codeFilterGroup = null;
-  gradeFilter.value = "all";
-  setStatus("");
-  window.history.replaceState(null, "", "lists.html");
-  renderVisibleGroups();
-}
-// 2003 ENDE
 
 // 1002 START - Aktualisiert die Ansicht nach einer Änderung des Jahrgangsfilters.
 function handleGradeChange() {
@@ -187,7 +182,7 @@ function renderGroups(groups) {
   for (const group of groups) {
     listCount += group.lists.length;
   }
-  updateResultsCount(languageGroups, listCount);
+  updateResultsCount(listCount);
 
   if (languageGroups.length === 0) {
     showEmptyState("Für diese Auswahl sind noch keine Vokabelsätze hinterlegt.");
@@ -464,15 +459,9 @@ function compareGroups(firstGroup, secondGroup) {
 }
 // 9003 ENDE
 
-// 9004 START - Aktualisiert die sichtbare Anzahl von Sprachen und Listen.
-function updateResultsCount(languageGroups, listCount) {
-  const languages = new Set();
-  for (const languageGroup of languageGroups) {
-    languages.add(languageGroup.language);
-  }
-
-  const languageSummary = languages.size === 1 ? [...languages][0] : `${languages.size} Sprachen`;
-  resultsCount.textContent = `${listCount} Vokabelsätze · ${languageSummary}`;
+// 9004 START - Aktualisiert die sichtbare Anzahl der Vokabelsätze.
+function updateResultsCount(listCount) {
+  resultsCount.textContent = `${listCount} Vokabelsätze`;
 }
 // 9004 ENDE
 
