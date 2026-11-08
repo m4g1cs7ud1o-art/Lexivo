@@ -10,7 +10,6 @@ const codeForm = document.querySelector("#code-form");
 const codeInput = document.querySelector("#group-code");
 const codeMessage = document.querySelector("#code-message");
 const gradeFilter = document.querySelector("#grade-filter");
-const listSearchForm = document.querySelector("#list-search-form");
 const listSearchInput = document.querySelector("#list-search-input");
 const resultsCount = document.querySelector("#results-count");
 const resultsContent = document.querySelector("#results-content");
@@ -25,7 +24,7 @@ function startApp() {
   codeForm.addEventListener("submit", handleCodeSubmit);
   codeInput.addEventListener("input", handleCodeInput);
   gradeFilter.addEventListener("change", handleGradeChange);
-  listSearchForm.addEventListener("submit", handleListSearch);
+  listSearchInput.addEventListener("input", handleListSearch);
   resultsContent.addEventListener("click", handleListAction);
   document.querySelector("#dialog-close").addEventListener("click", closeListDialog);
   document.querySelector("#mode-dialog-close").addEventListener("click", closeModeDialog);
@@ -129,8 +128,7 @@ function handleGradeChange() {
 // 1002 ENDE
 
 // 2007 START - Aktualisiert die Ansicht nach einer Änderung der Listennamensuche.
-function handleListSearch(event) {
-  event.preventDefault();
+function handleListSearch() {
   listSearchTerm = listSearchInput.value.trim().toLocaleLowerCase("de");
   renderVisibleGroups();
 }
