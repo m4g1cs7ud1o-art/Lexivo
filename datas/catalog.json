@@ -56,15 +56,6 @@
           "languageY": "Deutsch",
           "wordCount": 51,
           "file": "datas/12Eng/us-history/us-history.json"
-        },
-        {
-          "id": "westward-movement",
-          "title": "Westward Movement",
-          "description": "Englisch ↔ Deutsch",
-          "language": "Englisch",
-          "languageY": "Deutsch",
-          "wordCount": 17,
-          "file": "datas/12Eng/westward-movement/westward-movement.json"
         }
       ]
     }
