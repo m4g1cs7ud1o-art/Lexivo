@@ -225,7 +225,7 @@ h1 {
 .filters-row {
   display: flex;
   align-items: flex-start;
-  gap: 24px;
+  gap: 16px;
   padding: 15px 0 12px;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -247,7 +247,7 @@ h1 {
 
 .filter-controls {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
 }
 
@@ -266,7 +266,8 @@ h1 {
 }
 
 .filter-controls input {
-  width: min(260px, 100%);
+  flex: 1 1 0;
+  width: 0;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
 }
@@ -713,19 +714,13 @@ h1 {
     font-size: 32px;
   }
 
-  .filter-controls input {
-    flex: 1 1 100%;
-    width: 100%;
-  }
-
   .filters-row {
-    flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   .code-filter,
   .list-search {
-    width: 100%;
+    flex: 1 1 0;
   }
 
   .list-grid {
