@@ -31,6 +31,15 @@
           "file": "datas/12Eng/african-american-experiences/african-american-experiences.json"
         },
         {
+          "id": "the-ambiguity-of-belonging",
+          "title": "The ambiguity of belonging",
+          "description": "Englisch ↔ Deutsch",
+          "language": "Englisch",
+          "languageY": "Deutsch",
+          "wordCount": 74,
+          "file": "datas/12Eng/the-ambiguity-of-belonging/the-ambiguity-of-belonging.json"
+        },
+        {
           "id": "us-civil-rights-movement",
           "title": "US Civil Rights Movement",
           "description": "Englisch ↔ Deutsch",
