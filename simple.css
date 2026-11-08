@@ -222,15 +222,25 @@ h1 {
   font-size: 18px;
 }
 
-.code-filter {
-  display: grid;
-  gap: 8px;
+.filters-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
   padding: 15px 0 12px;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
 
-.code-filter > label {
+.code-filter,
+.list-search {
+  display: grid;
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.code-filter > label,
+.list-search > label {
   font-size: 12px;
   font-weight: 700;
 }
@@ -242,6 +252,7 @@ h1 {
 }
 
 .filter-controls input,
+.list-search input,
 .grade-filter select {
   min-width: 0;
   height: 40px;
@@ -260,7 +271,12 @@ h1 {
   letter-spacing: 0.04em;
 }
 
+.list-search input {
+  width: 100%;
+}
+
 .filter-controls input:focus,
+.list-search input:focus,
 .grade-filter select:focus {
   border-color: var(--green);
   box-shadow: 0 0 0 3px #175c4b1f;
@@ -699,6 +715,16 @@ h1 {
 
   .filter-controls input {
     flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .filters-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .code-filter,
+  .list-search {
     width: 100%;
   }
 

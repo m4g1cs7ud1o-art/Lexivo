@@ -9,6 +9,7 @@ const codeForm = document.querySelector("#code-form");
 const codeInput = document.querySelector("#group-code");
 const codeMessage = document.querySelector("#code-message");
 const gradeFilter = document.querySelector("#grade-filter");
+const listSearchInput = document.querySelector("#list-search-input");
 const resultsCount = document.querySelector("#results-count");
 const resultsContent = document.querySelector("#results-content");
 const listDialog = document.querySelector("#list-dialog");
@@ -22,6 +23,7 @@ function startApp() {
   codeForm.addEventListener("submit", handleCodeSubmit);
   codeInput.addEventListener("input", handleCodeInput);
   gradeFilter.addEventListener("change", handleGradeChange);
+  listSearchInput.addEventListener("input", handleListSearch);
   resultsContent.addEventListener("click", handleListAction);
   document.querySelector("#dialog-close").addEventListener("click", closeListDialog);
   document.querySelector("#mode-dialog-close").addEventListener("click", closeModeDialog);
@@ -124,6 +126,12 @@ function handleGradeChange() {
 }
 // 1002 ENDE
 
+// 2007 START - Aktualisiert die Ansicht nach einer Änderung der Listennamensuche.
+function handleListSearch() {
+  renderVisibleGroups();
+}
+// 2007 ENDE
+
 // 1003 START - Befüllt den Jahrgangsfilter aus den vorhandenen Klassen.
 function populateGradeFilter(groups) {
   gradeFilter.replaceChildren();
@@ -156,6 +164,7 @@ function renderVisibleGroups() {
 
   const visibleGroups = [];
   const selectedGrade = gradeFilter.value;
+  const searchTerm = listSearchInput.value.trim().toLocaleLowerCase("de");
 
   for (const group of catalog.groups) {
     if (codeFilterGroup && group.classId !== codeFilterGroup.classId) {
@@ -166,7 +175,12 @@ function renderVisibleGroups() {
       continue;
     }
 
-    visibleGroups.push(group);
+    const matchingLists = searchTerm
+      ? group.lists.filter((list) => list.title.toLocaleLowerCase("de").includes(searchTerm))
+      : group.lists;
+    if (matchingLists.length > 0) {
+      visibleGroups.push({ ...group, lists: matchingLists });
+    }
   }
 
   renderGroups(visibleGroups);
