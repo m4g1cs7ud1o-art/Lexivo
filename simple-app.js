@@ -2,6 +2,7 @@
 
 let catalog = null;
 let codeFilterGroup = null;
+let listSearchTerm = "";
 let selectedGroup = null;
 let selectedList = null;
 
@@ -9,6 +10,7 @@ const codeForm = document.querySelector("#code-form");
 const codeInput = document.querySelector("#group-code");
 const codeMessage = document.querySelector("#code-message");
 const gradeFilter = document.querySelector("#grade-filter");
+const listSearchForm = document.querySelector("#list-search-form");
 const listSearchInput = document.querySelector("#list-search-input");
 const resultsCount = document.querySelector("#results-count");
 const resultsContent = document.querySelector("#results-content");
@@ -23,7 +25,7 @@ function startApp() {
   codeForm.addEventListener("submit", handleCodeSubmit);
   codeInput.addEventListener("input", handleCodeInput);
   gradeFilter.addEventListener("change", handleGradeChange);
-  listSearchInput.addEventListener("input", handleListSearch);
+  listSearchForm.addEventListener("submit", handleListSearch);
   resultsContent.addEventListener("click", handleListAction);
   document.querySelector("#dialog-close").addEventListener("click", closeListDialog);
   document.querySelector("#mode-dialog-close").addEventListener("click", closeModeDialog);
@@ -127,7 +129,9 @@ function handleGradeChange() {
 // 1002 ENDE
 
 // 2007 START - Aktualisiert die Ansicht nach einer Änderung der Listennamensuche.
-function handleListSearch() {
+function handleListSearch(event) {
+  event.preventDefault();
+  listSearchTerm = listSearchInput.value.trim().toLocaleLowerCase("de");
   renderVisibleGroups();
 }
 // 2007 ENDE
@@ -164,8 +168,6 @@ function renderVisibleGroups() {
 
   const visibleGroups = [];
   const selectedGrade = gradeFilter.value;
-  const searchTerm = listSearchInput.value.trim().toLocaleLowerCase("de");
-
   for (const group of catalog.groups) {
     if (codeFilterGroup && group.classId !== codeFilterGroup.classId) {
       continue;
@@ -175,8 +177,8 @@ function renderVisibleGroups() {
       continue;
     }
 
-    const matchingLists = searchTerm
-      ? group.lists.filter((list) => list.title.toLocaleLowerCase("de").includes(searchTerm))
+    const matchingLists = listSearchTerm
+      ? group.lists.filter((list) => list.title.toLocaleLowerCase("de").includes(listSearchTerm))
       : group.lists;
     if (matchingLists.length > 0) {
       visibleGroups.push({ ...group, lists: matchingLists });

@@ -37,10 +37,13 @@
             </div>
             <p class="message" id="code-message" role="status" aria-live="polite"></p>
           </form>
-          <div class="list-search">
+          <form class="list-search" id="list-search-form">
             <label for="list-search-input">Vokabelsatz suchen</label>
-            <input id="list-search-input" type="search" autocomplete="off" placeholder="Name des Vokabelsatzes">
-          </div>
+            <div class="filter-controls">
+              <input id="list-search-input" type="search" autocomplete="off" placeholder="Name des Vokabelsatzes">
+              <button class="primary-button" type="submit">Suchen</button>
+            </div>
+          </form>
         </div>
 
         <div class="list-toolbar">

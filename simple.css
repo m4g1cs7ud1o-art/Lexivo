@@ -272,10 +272,6 @@ h1 {
   letter-spacing: 0.04em;
 }
 
-.list-search input {
-  width: 100%;
-}
-
 .filter-controls input:focus,
 .list-search input:focus,
 .grade-filter select:focus {
