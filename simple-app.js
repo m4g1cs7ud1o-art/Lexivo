@@ -2,6 +2,7 @@
 
 let catalog = null;
 let codeFilterGroup = null;
+let pendingCodeFilter = null;
 let listSearchTerm = "";
 let selectedGroup = null;
 let selectedList = null;
@@ -51,6 +52,10 @@ async function loadCatalog() {
     catalog.groups = sortGroups(catalog.groups);
     populateGradeFilter(catalog.groups);
     applyInitialCode();
+    if (pendingCodeFilter) {
+      applyCodeFilter(pendingCodeFilter);
+      pendingCodeFilter = null;
+    }
     renderVisibleGroups();
   } catch (error) {
     setStatus("Die Vokabelsammlung ist gerade nicht erreichbar.");
@@ -72,10 +77,18 @@ function handleCodeSubmit(event) {
   }
 
   if (!catalog) {
-    setStatus("Die Vokabelsammlung wird noch geladen.");
+    pendingCodeFilter = code;
+    setStatus("Der Klassencode wird angewendet, sobald die Sammlung geladen ist.");
     return;
   }
 
+  applyCodeFilter(code);
+  renderVisibleGroups();
+}
+// 2001 ENDE
+
+// 2008 START - Wendet einen gültigen Klassencode auf die Listenansicht an.
+function applyCodeFilter(code) {
   codeFilterGroup = findGroupByCode(code);
   if (!codeFilterGroup) {
     setStatus("Zu diesem Code wurde keine Lerngruppe gefunden.");
@@ -85,9 +98,8 @@ function handleCodeSubmit(event) {
 
   gradeFilter.value = "all";
   setStatus("Die Listen für diesen Klassencode werden angezeigt.");
-  renderVisibleGroups();
 }
-// 2001 ENDE
+// 2008 ENDE
 
 // 2002 START - Beschränkt das Codefeld auf sechs Ziffern.
 function handleCodeInput() {
